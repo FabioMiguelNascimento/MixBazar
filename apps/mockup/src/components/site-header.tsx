@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ClipboardText,
   Heart,
   MagnifyingGlass,
   ShoppingBag,
@@ -23,7 +24,7 @@ export function SiteHeader({
   favoritesCount: number;
   activePath: string;
 }) {
-  const { count } = useBasket();
+  const { count, requests } = useBasket();
 
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
@@ -100,6 +101,28 @@ export function SiteHeader({
                 className="flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal"
               >
                 {count}
+              </span>
+            )}
+          </Link>
+
+          <Link
+            href="/solicitacoes"
+            aria-label="Minhas solicitações"
+            aria-current={activePath === "/solicitacoes" ? "page" : undefined}
+            className="relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle sm:w-auto sm:gap-2 sm:rounded-button sm:px-3"
+          >
+            <ClipboardText size={20} weight="regular" />
+
+            <span className="hidden whitespace-nowrap text-sm font-medium sm:block">
+              Solicitações
+            </span>
+
+            {requests.length > 0 && (
+              <span
+                aria-live="polite"
+                className="flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal"
+              >
+                {requests.length}
               </span>
             )}
           </Link>
