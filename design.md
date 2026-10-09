@@ -165,9 +165,3 @@ Sempre gradiente `bg-gradient-to-t from-gunmetal/80 via-gunmetal/10 to-transpare
 - Texto branco sem gradiente sobre imagem; texto Lime em fundo claro.
 - Emojis no UI; ícone Phosphor sempre.
 - Layout centralizado simétrico em tudo — o hero é split, os blocos são assimétricos.
-
-## 13. Ordem de construção das telas
-
-`Home` → `Catálogo` → `Detalhes do produto` → `Montar cesta` → `Minha cesta` → `Enviar solicitação` → `Acompanhar solicitação` → depois painel (`Dashboard`, `Produtos`, `Categorias`, `Promoções`, `Clientes`, `Solicitações`).
-
-A tela de Detalhes do produto é a próxima e serve de molde para: galeria de imagem, preço com riscado, favoritos, descrição, quantidade (`−`/`+`), "Adicionar à cesta" e a seção **"Combine com sua cesta"** (recomendação contextual, 3–4 produtos).
