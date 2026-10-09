@@ -1,4 +1,5 @@
 import { Heart, Plus, Tag } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
 import type { Product } from "@/data/catalog";
 
 export function ProductCard({
@@ -10,17 +11,21 @@ export function ProductCard({
   favored: boolean;
   onToggleFavorite: () => void;
 }) {
+  const href = `/produto/${product.id}`;
+
   return (
     <article className="group">
       <div className="relative aspect-[4/4.5] overflow-hidden rounded-card bg-platinum">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.035]"
-        />
+        <Link href={href} className="absolute inset-0 block">
+          <img
+            src={product.images[0]}
+            alt={product.name}
+            className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.035]"
+          />
+        </Link>
 
         {product.badge && (
-          <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-button bg-lime px-3 py-1.5 text-xs font-semibold text-gunmetal">
+          <span className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-button bg-lime px-3 py-1.5 text-xs font-semibold text-gunmetal">
             <Tag size={12} weight="fill" />
             {product.badge}
           </span>
@@ -48,7 +53,7 @@ export function ProductCard({
         </button>
       </div>
 
-      <div className="pt-5">
+      <Link href={href} className="block pt-5">
         <p className="text-xs font-medium text-pine/70">{product.category}</p>
 
         <h3 className="mt-1 font-heading text-base font-semibold tracking-tight text-gunmetal">
@@ -66,7 +71,7 @@ export function ProductCard({
             {product.price}
           </span>
         </div>
-      </div>
+      </Link>
     </article>
   );
 }
