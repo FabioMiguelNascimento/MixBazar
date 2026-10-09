@@ -47,6 +47,8 @@ type BasketContextValue = {
 const FIRST_BASKET_ID = "cesta-1";
 const FIRST_BASKET_NAME = "Minha cesta";
 
+export const MAX_BASKETS = 5;
+
 function freshBasket(id: string, name: string): Basket {
   return { id, name, items: [] };
 }
@@ -122,13 +124,17 @@ export function BasketProvider({ children }: { children: ReactNode }) {
   );
 
   const createBasket = useCallback(() => {
+    if (baskets.length >= MAX_BASKETS) {
+      return;
+    }
+
     const n = counter.current;
     counter.current += 1;
     const id = `cesta-${n}`;
 
-    setBaskets((current) => [...current, freshBasket(id, `Cesta ${n}`)]);
+    setBaskets([...baskets, freshBasket(id, `Cesta ${n}`)]);
     setActiveId(id);
-  }, []);
+  }, [baskets]);
 
   const switchBasket = useCallback((id: string) => {
     setActiveId(id);

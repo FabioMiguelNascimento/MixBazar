@@ -14,7 +14,7 @@ import { useRef, useState } from "react";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { formatPrice, useBasket } from "@/context/basket";
+import { formatPrice, MAX_BASKETS, useBasket } from "@/context/basket";
 
 export default function CestaPage() {
   const {
@@ -37,6 +37,7 @@ export default function CestaPage() {
   const cancelRename = useRef(false);
 
   const active = baskets.find((basket) => basket.id === activeId) ?? baskets[0];
+  const atMax = baskets.length >= MAX_BASKETS;
 
   if (!active) {
     return null;
@@ -85,52 +86,66 @@ export default function CestaPage() {
               </p>
             </section>
 
-            <div
-              role="group"
-              aria-label="Escolher cesta"
-              className="flex flex-wrap gap-2 pb-8"
-            >
-              {baskets.map((basket) => {
-                const basketCount = basket.items.reduce(
-                  (total, item) => total + item.quantity,
-                  0,
-                );
-                const isActive = basket.id === active.id;
-
-                return (
-                  <button
-                    key={basket.id}
-                    type="button"
-                    aria-pressed={isActive}
-                    onClick={() => switchBasket(basket.id)}
-                    className={`inline-flex items-center gap-1.5 rounded-button border px-4 py-2 text-sm font-medium transition ${
-                      isActive
-                        ? "border-jungle bg-jungle/10 text-jungle"
-                        : "border-border bg-background text-pine hover:border-jungle hover:text-jungle"
-                    }`}
-                  >
-                    {basket.name}
-                    <span
-                      className={
-                        isActive ? "text-xs text-jungle/70" : "text-xs text-pine/60"
-                      }
-                    >
-                      · {basketCount}{" "}
-                      {basketCount === 1 ? "item" : "itens"}
-                    </span>
-                  </button>
-                );
-              })}
-
-              <button
-                type="button"
-                aria-label="Criar nova cesta"
-                onClick={createBasket}
-                className="inline-flex items-center gap-1.5 rounded-button border border-border bg-background px-4 py-2 text-sm font-medium text-pine transition hover:border-jungle hover:text-jungle"
+            <div className="pb-8">
+              <div
+                role="group"
+                aria-label="Escolher cesta"
+                className="flex gap-2 overflow-x-auto scroll-slim"
               >
-                <Plus size={15} weight="bold" />
-                Nova cesta
-              </button>
+                {baskets.map((basket) => {
+                  const basketCount = basket.items.reduce(
+                    (total, item) => total + item.quantity,
+                    0,
+                  );
+                  const isActive = basket.id === active.id;
+
+                  return (
+                    <button
+                      key={basket.id}
+                      type="button"
+                      aria-pressed={isActive}
+                      onClick={() => switchBasket(basket.id)}
+                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-button border px-4 py-2 text-sm font-medium transition ${
+                        isActive
+                          ? "border-jungle bg-jungle/10 text-jungle"
+                          : "border-border bg-background text-pine hover:border-jungle hover:text-jungle"
+                      }`}
+                    >
+                      {basket.name}
+                      <span
+                        className={
+                          isActive
+                            ? "text-xs text-jungle/70"
+                            : "text-xs text-pine/60"
+                        }
+                      >
+                        · {basketCount}{" "}
+                        {basketCount === 1 ? "item" : "itens"}
+                      </span>
+                    </button>
+                  );
+                })}
+
+                <button
+                  type="button"
+                  aria-label="Criar nova cesta"
+                  title={
+                    atMax ? "Limite de 5 cestas atingido" : undefined
+                  }
+                  disabled={atMax}
+                  onClick={createBasket}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-button border border-border bg-background px-4 py-2 text-sm font-medium text-pine transition hover:border-jungle hover:text-jungle disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Plus size={15} weight="bold" />
+                  Nova cesta
+                </button>
+              </div>
+
+              {atMax && (
+                <p aria-live="polite" className="pt-3 text-xs text-pine/70">
+                  Limite de 5 cestas atingido — exclua uma para criar outra.
+                </p>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3">
