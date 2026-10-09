@@ -71,8 +71,7 @@ export const Errors = {
           key: "discount_code",
           message: "The discount code is invalid or has expired.",
           regex: "^[A-Z0-9]{5,10}$",
-          validation:
-            "discount_code.required.min_length=5.max_length=10.format=alphanumeric",
+          validation: "discount_code.required.min_length=5.max_length=10.format=alphanumeric",
           ...detail,
         },
       ],
