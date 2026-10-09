@@ -116,86 +116,42 @@
   --gunmetal: oklch(0.376 0.0034 286.24);
 
   /* Surfaces */
-  --surface-card: color-mix(
-    in oklch,
-    var(--jungle) 6%,
-    var(--platinum)
-  );
+  --surface-card: color-mix(in oklch, var(--jungle) 6%, var(--platinum));
 
   /* Interaction */
-  --primary-hover: color-mix(
-    in oklch,
-    var(--jungle) 88%,
-    var(--gunmetal)
-  );
+  --primary-hover: color-mix(in oklch, var(--jungle) 88%, var(--gunmetal));
 
-  --primary-active: color-mix(
-    in oklch,
-    var(--jungle) 76%,
-    var(--gunmetal)
-  );
+  --primary-active: color-mix(in oklch, var(--jungle) 76%, var(--gunmetal));
 
-  --secondary-hover: color-mix(
-    in oklch,
-    var(--lime) 82%,
-    var(--pine)
-  );
+  --secondary-hover: color-mix(in oklch, var(--lime) 82%, var(--pine));
 
-  --secondary-active: color-mix(
-    in oklch,
-    var(--lime) 68%,
-    var(--pine)
-  );
+  --secondary-active: color-mix(in oklch, var(--lime) 68%, var(--pine));
 
   /* Semantic - Success */
-  --success-bg: color-mix(
-    in oklch,
-    var(--jungle) 12%,
-    var(--platinum)
-  );
+  --success-bg: color-mix(in oklch, var(--jungle) 12%, var(--platinum));
 
   --success-border: var(--jungle);
   --success-text: var(--pine);
 
   /* Semantic - Info */
-  --info-bg: color-mix(
-    in oklch,
-    var(--pine) 10%,
-    var(--platinum)
-  );
+  --info-bg: color-mix(in oklch, var(--pine) 10%, var(--platinum));
 
   --info-border: var(--pine);
   --info-text: var(--pine);
 
   /* Semantic - Warning */
-  --warning-bg: color-mix(
-    in oklch,
-    var(--lime) 28%,
-    var(--platinum)
-  );
+  --warning-bg: color-mix(in oklch, var(--lime) 28%, var(--platinum));
 
-  --warning-border: color-mix(
-    in oklch,
-    var(--lime) 55%,
-    var(--pine)
-  );
+  --warning-border: color-mix(in oklch, var(--lime) 55%, var(--pine));
 
   --warning-text: var(--gunmetal);
 
   /* Semantic - Danger */
   --destructive: oklch(0.577 0.245 27.325);
 
-  --danger-bg: color-mix(
-    in oklch,
-    var(--destructive) 8%,
-    var(--platinum)
-  );
+  --danger-bg: color-mix(in oklch, var(--destructive) 8%, var(--platinum));
 
-  --danger-border: color-mix(
-    in oklch,
-    var(--destructive) 35%,
-    var(--platinum)
-  );
+  --danger-border: color-mix(in oklch, var(--destructive) 35%, var(--platinum));
 
   --danger-text: var(--destructive);
 
@@ -219,17 +175,9 @@
   --accent: var(--lime);
   --accent-foreground: var(--gunmetal);
 
-  --border: color-mix(
-    in oklch,
-    var(--gunmetal) 12%,
-    var(--platinum)
-  );
+  --border: color-mix(in oklch, var(--gunmetal) 12%, var(--platinum));
 
-  --input: color-mix(
-    in oklch,
-    var(--gunmetal) 22%,
-    var(--platinum)
-  );
+  --input: color-mix(in oklch, var(--gunmetal) 22%, var(--platinum));
 
   --ring: var(--jungle);
 
@@ -238,11 +186,7 @@
   --chart-3: var(--lime);
   --chart-4: var(--gunmetal);
 
-  --chart-5: color-mix(
-    in oklch,
-    var(--jungle) 55%,
-    var(--platinum)
-  );
+  --chart-5: color-mix(in oklch, var(--jungle) 55%, var(--platinum));
 
   --radius: 0.625rem;
   --sidebar: var(--platinum);
@@ -252,11 +196,7 @@
   --sidebar-accent: var(--lime);
   --sidebar-accent-foreground: var(--gunmetal);
 
-  --sidebar-border: color-mix(
-    in oklch,
-    var(--gunmetal) 12%,
-    var(--platinum)
-  );
+  --sidebar-border: color-mix(in oklch, var(--gunmetal) 12%, var(--platinum));
 
   --sidebar-ring: var(--jungle);
 }
