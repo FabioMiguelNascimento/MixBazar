@@ -12,7 +12,7 @@
     "dev:web": "turbo run dev --filter=web",
     "dev:mockup": "turbo run dev --filter=mockup",
     "dev:api": "turbo run dev --filter=api",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint && node scripts/design-check.mjs",
     "typecheck": "turbo run typecheck",
     "db:generate": "turbo run db:generate --filter=api",
     "db:migrate": "turbo run db:migrate --filter=api",
