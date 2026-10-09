@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Mockup — TCC",
   description: "App de mockup de telas, sem auth nem backend.",
+  icons: { icon: "/mockup/LogoMix.svg" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

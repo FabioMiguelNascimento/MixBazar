@@ -13,7 +13,7 @@ export function SiteFooter() {
               aria-label="Mix Bazar"
             >
               <img
-                src="/LogoMix.svg"
+                src="/mockup/LogoMix.svg"
                 alt="Mix Bazar"
                 className="size-8 object-contain"
               />

@@ -34,7 +34,7 @@ export function SiteHeader({
           aria-label="Mix Bazar"
         >
           <img
-            src="/LogoMix.svg"
+            src="/mockup/LogoMix.svg"
             alt="Mix Bazar"
             className="size-12 object-contain"
           />
