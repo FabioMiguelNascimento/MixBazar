@@ -15,9 +15,11 @@ const navItems = [
 
 export function SiteHeader({
   favoritesCount,
+  basketCount = 2,
   activePath,
 }: {
   favoritesCount: number;
+  basketCount?: number;
   activePath: string;
 }) {
   return (
@@ -88,9 +90,14 @@ export function SiteHeader({
               Minha cesta
             </span>
 
-            <span className="flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal">
-              2
-            </span>
+            {basketCount > 0 && (
+              <span
+                aria-live="polite"
+                className="flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal"
+              >
+                {basketCount}
+              </span>
+            )}
           </button>
         </div>
       </div>
