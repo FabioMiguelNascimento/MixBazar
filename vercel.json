@@ -1,0 +1,40 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "api": {
+      "root": "apps/api",
+      "framework": "nestjs",
+      "buildCommand": "cd ../.. && pnpm turbo run build --filter=api",
+      "routes": [
+        {
+          "src": "/api/(.*)",
+          "transforms": [{ "type": "request.path", "op": "set", "args": "/$1" }]
+        }
+      ]
+    },
+    "web": {
+      "root": "apps/web",
+      "framework": "nextjs",
+      "buildCommand": "cd ../.. && pnpm turbo run build --filter=web"
+    },
+    "mockup": {
+      "root": "apps/mockup",
+      "framework": "nextjs",
+      "buildCommand": "cd ../.. && pnpm turbo run build --filter=mockup"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": { "service": "api" }
+    },
+    {
+      "source": "/mockup/(.*)",
+      "destination": { "service": "mockup" }
+    },
+    {
+      "source": "/(.*)",
+      "destination": { "service": "web" }
+    }
+  ]
+}
