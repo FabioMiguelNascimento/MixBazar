@@ -1,6 +1,9 @@
 import { isApiError } from "@repo/types";
 
-const BASE = process.env["NEXT_PUBLIC_API_URL"] ?? "http://localhost:3001/v1";
+// Mesma origem por padrão: em produção /api é servido pelo serviço api
+// (rewrite da Vercel); localmente, pelo proxy do next.config.ts.
+// Defina NEXT_PUBLIC_API_URL apenas para apontar para outra origem.
+const BASE = process.env["NEXT_PUBLIC_API_URL"] ?? "/api/v1";
 
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
