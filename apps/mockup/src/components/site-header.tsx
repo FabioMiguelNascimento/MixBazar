@@ -1,9 +1,12 @@
+"use client";
+
 import {
   Heart,
   MagnifyingGlass,
   ShoppingBag,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { useBasket } from "@/context/basket";
 
 const navItems = [
   { label: "Início", href: "/home" },
@@ -15,13 +18,13 @@ const navItems = [
 
 export function SiteHeader({
   favoritesCount,
-  basketCount = 2,
   activePath,
 }: {
   favoritesCount: number;
-  basketCount?: number;
   activePath: string;
 }) {
+  const { count } = useBasket();
+
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center gap-5 px-6">
@@ -79,9 +82,10 @@ export function SiteHeader({
             )}
           </button>
 
-          <button
-            type="button"
+          <Link
+            href="/cesta"
             aria-label="Minha cesta"
+            aria-current={activePath === "/cesta" ? "page" : undefined}
             className="relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle sm:w-auto sm:gap-2 sm:rounded-button sm:px-3"
           >
             <ShoppingBag size={20} weight="regular" />
@@ -90,15 +94,15 @@ export function SiteHeader({
               Minha cesta
             </span>
 
-            {basketCount > 0 && (
+            {count > 0 && (
               <span
                 aria-live="polite"
                 className="flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal"
               >
-                {basketCount}
+                {count}
               </span>
             )}
-          </button>
+          </Link>
         </div>
       </div>
     </header>

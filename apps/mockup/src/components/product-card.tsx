@@ -6,10 +6,12 @@ export function ProductCard({
   product,
   favored,
   onToggleFavorite,
+  onAdd,
 }: {
   product: Product;
   favored: boolean;
   onToggleFavorite: () => void;
+  onAdd: () => void;
 }) {
   const href = `/produto/${product.id}`;
 
@@ -47,6 +49,7 @@ export function ProductCard({
         <button
           type="button"
           aria-label={`Adicionar ${product.name} à cesta`}
+          onClick={onAdd}
           className="absolute bottom-4 right-4 flex size-10 items-center justify-center rounded-full bg-jungle text-platinum opacity-0 shadow-lg transition group-hover:opacity-100 hover:bg-primary-hover focus-visible:opacity-100"
         >
           <Plus size={19} weight="bold" />
