@@ -5,14 +5,16 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import type { Product } from "@/data/catalog";
 
 /* ------------------------------------------------------------------ */
-/* Cesta global do mockup — compartilhada por Home, Catálogo, Detalhe  */
-/* e página da cesta                                                   */
+/* Cestas do mockup — vários rascunhos nomeados por comprador, com uma */
+/* cesta ativa. Home, Catálogo e Detalhe somem sempre na ativa, por    */
+/* isso a API de leitura (items/count/subtotal/addItem) não mudou.     */
 /* ------------------------------------------------------------------ */
 
 export type BasketItem = {
@@ -20,81 +22,223 @@ export type BasketItem = {
   quantity: number;
 };
 
+export type Basket = {
+  id: string;
+  name: string;
+  items: BasketItem[];
+};
+
 type BasketContextValue = {
+  baskets: Basket[];
+  activeId: string;
   items: BasketItem[];
   count: number;
   subtotal: number;
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
-  clear: () => void;
+  createBasket: () => void;
+  switchBasket: (id: string) => void;
+  renameBasket: (id: string, name: string) => void;
+  deleteBasket: (id: string) => void;
+  sendActiveBasket: () => string;
 };
+
+const FIRST_BASKET_ID = "cesta-1";
+const FIRST_BASKET_NAME = "Minha cesta";
+
+function freshBasket(id: string, name: string): Basket {
+  return { id, name, items: [] };
+}
+
+function updateItems(
+  baskets: Basket[],
+  id: string,
+  update: (items: BasketItem[]) => BasketItem[],
+): Basket[] {
+  return baskets.map((basket) =>
+    basket.id === id ? { ...basket, items: update(basket.items) } : basket,
+  );
+}
 
 const BasketContext = createContext<BasketContextValue | null>(null);
 
 export function BasketProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<BasketItem[]>([]);
+  const [baskets, setBaskets] = useState<Basket[]>(() => [
+    freshBasket(FIRST_BASKET_ID, FIRST_BASKET_NAME),
+  ]);
+  const [activeId, setActiveId] = useState(FIRST_BASKET_ID);
+  const counter = useRef(2);
 
-  const addItem = useCallback((product: Product, quantity = 1) => {
-    const amount = Math.max(1, quantity);
+  const addItem = useCallback(
+    (product: Product, quantity = 1) => {
+      const amount = Math.max(1, quantity);
 
-    setItems((current) => {
-      const existing = current.find((item) => item.product.id === product.id);
+      setBaskets((current) =>
+        updateItems(current, activeId, (items) => {
+          const existing = items.find(
+            (item) => item.product.id === product.id,
+          );
 
-      if (!existing) {
-        return [...current, { product, quantity: amount }];
-      }
+          if (!existing) {
+            return [...items, { product, quantity: amount }];
+          }
 
-      return current.map((item) =>
-        item.product.id === product.id
-          ? { ...item, quantity: item.quantity + amount }
-          : item,
+          return items.map((item) =>
+            item.product.id === product.id
+              ? { ...item, quantity: item.quantity + amount }
+              : item,
+          );
+        }),
       );
-    });
+    },
+    [activeId],
+  );
+
+  const removeItem = useCallback(
+    (id: string) => {
+      setBaskets((current) =>
+        updateItems(current, activeId, (items) =>
+          items.filter((item) => item.product.id !== id),
+        ),
+      );
+    },
+    [activeId],
+  );
+
+  const setQuantity = useCallback(
+    (id: string, quantity: number) => {
+      setBaskets((current) =>
+        updateItems(current, activeId, (items) =>
+          items.map((item) =>
+            item.product.id === id
+              ? { ...item, quantity: Math.max(1, quantity) }
+              : item,
+          ),
+        ),
+      );
+    },
+    [activeId],
+  );
+
+  const createBasket = useCallback(() => {
+    const n = counter.current;
+    counter.current += 1;
+    const id = `cesta-${n}`;
+
+    setBaskets((current) => [...current, freshBasket(id, `Cesta ${n}`)]);
+    setActiveId(id);
   }, []);
 
-  const removeItem = useCallback((id: string) => {
-    setItems((current) =>
-      current.filter((item) => item.product.id !== id),
-    );
+  const switchBasket = useCallback((id: string) => {
+    setActiveId(id);
   }, []);
 
-  const setQuantity = useCallback((id: string, quantity: number) => {
-    setItems((current) =>
-      current.map((item) =>
-        item.product.id === id
-          ? { ...item, quantity: Math.max(1, quantity) }
-          : item,
+  const renameBasket = useCallback((id: string, name: string) => {
+    const trimmed = name.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    setBaskets((current) =>
+      current.map((basket) =>
+        basket.id === id ? { ...basket, name: trimmed } : basket,
       ),
     );
   }, []);
 
-  const clear = useCallback(() => {
-    setItems([]);
-  }, []);
+  const deleteBasket = useCallback(
+    (id: string) => {
+      if (baskets.length <= 1) {
+        setBaskets(updateItems(baskets, id, () => []));
+        return;
+      }
 
-  const { count, subtotal } = useMemo(
-    () => ({
-      count: items.reduce((total, item) => total + item.quantity, 0),
-      subtotal: items.reduce(
+      const remaining = baskets.filter((basket) => basket.id !== id);
+      setBaskets(remaining);
+
+      if (id === activeId) {
+        const first = remaining[0];
+
+        if (first) {
+          setActiveId(first.id);
+        }
+      }
+    },
+    [baskets, activeId],
+  );
+
+  const sendActiveBasket = useCallback(() => {
+    const sent = baskets.find((basket) => basket.id === activeId);
+    const sentName = sent?.name ?? FIRST_BASKET_NAME;
+    const remaining = baskets.filter((basket) => basket.id !== sent?.id);
+
+    if (remaining.length === 0) {
+      const n = counter.current;
+      counter.current += 1;
+      const fresh = freshBasket(`cesta-${n}`, FIRST_BASKET_NAME);
+      setBaskets([fresh]);
+      setActiveId(fresh.id);
+    } else {
+      setBaskets(remaining);
+
+      const first = remaining[0];
+
+      if (first) {
+        setActiveId(first.id);
+      }
+    }
+
+    return sentName;
+  }, [baskets, activeId]);
+
+  const { items, count, subtotal } = useMemo(() => {
+    const active =
+      baskets.find((basket) => basket.id === activeId) ?? baskets[0];
+    const list = active?.items ?? [];
+
+    return {
+      items: list,
+      count: list.reduce((total, item) => total + item.quantity, 0),
+      subtotal: list.reduce(
         (total, item) => total + item.quantity * item.product.priceValue,
         0,
       ),
-    }),
-    [items],
-  );
+    };
+  }, [baskets, activeId]);
 
   const value = useMemo(
     () => ({
+      baskets,
+      activeId,
       items,
       count,
       subtotal,
       addItem,
       removeItem,
       setQuantity,
-      clear,
+      createBasket,
+      switchBasket,
+      renameBasket,
+      deleteBasket,
+      sendActiveBasket,
     }),
-    [items, count, subtotal, addItem, removeItem, setQuantity, clear],
+    [
+      baskets,
+      activeId,
+      items,
+      count,
+      subtotal,
+      addItem,
+      removeItem,
+      setQuantity,
+      createBasket,
+      switchBasket,
+      renameBasket,
+      deleteBasket,
+      sendActiveBasket,
+    ],
   );
 
   return (
