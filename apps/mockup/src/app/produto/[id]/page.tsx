@@ -16,19 +16,18 @@ import { SectionHeader } from "@/components/section-header";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { useBasket } from "@/context/basket";
 import { products, recommendedIds } from "@/data/catalog";
-
-const INITIAL_BASKET_COUNT = 2;
 
 export default function ProdutoPage() {
   const { id } = useParams<{ id: string }>();
   const pathname = usePathname();
 
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [basketCount, setBasketCount] = useState(INITIAL_BASKET_COUNT);
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [renderedId, setRenderedId] = useState(id);
+  const { addItem } = useBasket();
 
   const product = products.find((item) => item.id === id);
 
@@ -58,11 +57,7 @@ export default function ProdutoPage() {
     <main className="min-h-svh bg-background text-foreground">
       <ServiceBar />
 
-      <SiteHeader
-        favoritesCount={favorites.length}
-        basketCount={basketCount}
-        activePath={pathname}
-      />
+      <SiteHeader favoritesCount={favorites.length} activePath={pathname} />
 
       <div className="mx-auto max-w-7xl px-6">
         {!product ? (
@@ -230,9 +225,7 @@ export default function ProdutoPage() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setBasketCount((current) => current + quantity)
-                  }
+                  onClick={() => addItem(product, quantity)}
                   className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-button bg-jungle px-6 py-4 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active sm:w-auto"
                 >
                   <Basket size={18} weight="bold" />
@@ -257,6 +250,7 @@ export default function ProdutoPage() {
                     product={item}
                     favored={favorites.includes(item.id)}
                     onToggleFavorite={() => toggleFavorite(item.id)}
+                    onAdd={() => addItem(item)}
                   />
                 ))}
               </div>

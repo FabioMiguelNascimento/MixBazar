@@ -8,6 +8,7 @@ import { SectionHeader } from "@/components/section-header";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { useBasket } from "@/context/basket";
 import { categories, products, type Product } from "@/data/catalog";
 
 /* ------------------------------------------------------------------ */
@@ -18,7 +19,9 @@ type HeroCampaign = {
   title: string;
   description: string;
   primaryCta: string;
+  primaryHref: string;
   secondaryCta: string;
+  secondaryHref: string;
   image: string;
 };
 
@@ -28,7 +31,9 @@ const heroCampaigns: HeroCampaign[] = [
     description:
       "Escolha os produtos, monte sua cesta e envie sua solicitação.",
     primaryCta: "Montar minha cesta",
+    primaryHref: "/cesta",
     secondaryCta: "Ver catálogo",
+    secondaryHref: "/catalogo",
     image:
       "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=1400&q=90",
   },
@@ -37,7 +42,9 @@ const heroCampaigns: HeroCampaign[] = [
     description:
       "Encontre flores disponíveis para presentear ou deixar o seu dia mais especial.",
     primaryCta: "Ver flores",
+    primaryHref: "/catalogo",
     secondaryCta: "Ver catálogo",
+    secondaryHref: "/catalogo",
     image:
       "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1400&q=90",
   },
@@ -46,7 +53,9 @@ const heroCampaigns: HeroCampaign[] = [
     description:
       "Encontre ideias para aniversários, comemorações ou simplesmente para surpreender.",
     primaryCta: "Ver presentes",
+    primaryHref: "/catalogo",
     secondaryCta: "Ver catálogo",
+    secondaryHref: "/catalogo",
     image:
       "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=1400&q=90",
   },
@@ -55,6 +64,7 @@ const heroCampaigns: HeroCampaign[] = [
 export default function MockupHome() {
   const [heroIndex, setHeroIndex] = useState(0);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const { addItem } = useBasket();
 
   const hero = heroCampaigns[heroIndex];
 
@@ -85,6 +95,7 @@ export default function MockupHome() {
           products={products.slice(0, 4)}
           favorites={favorites}
           onToggleFavorite={toggleFavorite}
+          onAddItem={addItem}
         />
 
         <CustomBasket />
@@ -146,20 +157,20 @@ function Hero({
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <button
-              type="button"
+            <Link
+              href={campaign.primaryHref}
               className="inline-flex items-center gap-2 rounded-button bg-lime px-6 py-3.5 text-sm font-semibold text-gunmetal transition hover:bg-secondary-hover active:bg-secondary-active"
             >
               {campaign.primaryCta}
               <ArrowRight size={17} />
-            </button>
+            </Link>
 
-            <button
-              type="button"
+            <Link
+              href={campaign.secondaryHref}
               className="rounded-button border border-white/30 px-6 py-3.5 text-sm font-medium text-white transition hover:bg-white/10"
             >
               {campaign.secondaryCta}
-            </button>
+            </Link>
           </div>
 
           <div className="mt-10 flex items-center gap-1">
@@ -235,10 +246,12 @@ function FeaturedProducts({
   products,
   favorites,
   onToggleFavorite,
+  onAddItem,
 }: {
   products: Product[];
   favorites: string[];
   onToggleFavorite: (id: string) => void;
+  onAddItem: (product: Product) => void;
 }) {
   return (
     <section id="destaques" className="scroll-mt-24 pb-20 md:pb-24">
@@ -256,6 +269,7 @@ function FeaturedProducts({
             product={product}
             favored={favorites.includes(product.id)}
             onToggleFavorite={() => onToggleFavorite(product.id)}
+            onAdd={() => onAddItem(product)}
           />
         ))}
       </div>
@@ -311,13 +325,13 @@ function CustomBasket() {
             ))}
           </ol>
 
-          <button
-            type="button"
+          <Link
+            href="/cesta"
             className="mt-8 inline-flex w-fit items-center gap-2 rounded-button bg-lime px-5 py-3 text-sm font-semibold text-gunmetal transition hover:bg-secondary-hover active:bg-secondary-active"
           >
             Montar minha cesta
             <ArrowRight size={17} />
-          </button>
+          </Link>
         </div>
       </div>
     </section>
@@ -347,13 +361,13 @@ function CampaignBanner() {
           </p>
         </div>
 
-        <button
-          type="button"
+        <Link
+          href="/catalogo"
           className="inline-flex w-fit items-center gap-2 rounded-button bg-jungle px-5 py-3 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
         >
           Explorar novidades
           <ArrowRight size={17} />
-        </button>
+        </Link>
       </div>
     </section>
   );

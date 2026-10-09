@@ -5,11 +5,13 @@ import {
   CaretDown,
   Package,
 } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
 import { useState } from "react";
 import { ProductCard } from "@/components/product-card";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { useBasket } from "@/context/basket";
 import { categories, products, type Product } from "@/data/catalog";
 
 type SortKey = "destaques" | "menor" | "maior" | "az";
@@ -34,6 +36,7 @@ export default function CatalogoPage() {
   const [sort, setSort] = useState<SortKey>("destaques");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const { addItem } = useBasket();
 
   function toggleFavorite(id: string) {
     setFavorites((current) =>
@@ -154,6 +157,7 @@ export default function CatalogoPage() {
                   product={product}
                   favored={favorites.includes(product.id)}
                   onToggleFavorite={() => toggleFavorite(product.id)}
+                  onAdd={() => addItem(product)}
                 />
               ))}
             </div>
@@ -213,13 +217,13 @@ export default function CatalogoPage() {
               </p>
             </div>
 
-            <button
-              type="button"
+            <Link
+              href="/cesta"
               className="inline-flex w-fit items-center gap-2 rounded-button bg-jungle px-5 py-3 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
             >
               Montar minha cesta
               <ArrowRight size={17} />
-            </button>
+            </Link>
           </div>
         </section>
       </div>
