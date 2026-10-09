@@ -15,6 +15,7 @@ import type { Product } from "@/data/catalog";
 /* Cestas do mockup — vários rascunhos nomeados por comprador, com uma */
 /* cesta ativa. Home, Catálogo e Detalhe somem sempre na ativa, por    */
 /* isso a API de leitura (items/count/subtotal/addItem) não mudou.     */
+/* Envios viram solicitações registradas no histórico.                 */
 /* ------------------------------------------------------------------ */
 
 export type BasketItem = {
@@ -28,12 +29,23 @@ export type Basket = {
   items: BasketItem[];
 };
 
+export type Solicitation = {
+  id: string;
+  number: number;
+  name: string;
+  items: BasketItem[];
+  count: number;
+  subtotal: number;
+  sentAt: string;
+};
+
 type BasketContextValue = {
   baskets: Basket[];
   activeId: string;
   items: BasketItem[];
   count: number;
   subtotal: number;
+  requests: Solicitation[];
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
@@ -41,7 +53,7 @@ type BasketContextValue = {
   switchBasket: (id: string) => void;
   renameBasket: (id: string, name: string) => void;
   deleteBasket: (id: string) => void;
-  sendActiveBasket: () => string;
+  sendActiveBasket: () => Solicitation;
 };
 
 const FIRST_BASKET_ID = "cesta-1";
@@ -70,7 +82,9 @@ export function BasketProvider({ children }: { children: ReactNode }) {
     freshBasket(FIRST_BASKET_ID, FIRST_BASKET_NAME),
   ]);
   const [activeId, setActiveId] = useState(FIRST_BASKET_ID);
+  const [requests, setRequests] = useState<Solicitation[]>([]);
   const counter = useRef(2);
+  const requestCounter = useRef(1);
 
   const addItem = useCallback(
     (product: Product, quantity = 1) => {
@@ -176,14 +190,31 @@ export function BasketProvider({ children }: { children: ReactNode }) {
   );
 
   const sendActiveBasket = useCallback(() => {
-    const sent = baskets.find((basket) => basket.id === activeId);
-    const sentName = sent?.name ?? FIRST_BASKET_NAME;
-    const remaining = baskets.filter((basket) => basket.id !== sent?.id);
+    const target =
+      baskets.find((basket) => basket.id === activeId) ?? baskets[0];
+    const targetItems = target?.items ?? [];
+    const number = requestCounter.current;
+    requestCounter.current += 1;
+
+    const sent: Solicitation = {
+      id: `solicitacao-${number}`,
+      number,
+      name: target?.name ?? FIRST_BASKET_NAME,
+      items: targetItems,
+      count: targetItems.reduce((total, item) => total + item.quantity, 0),
+      subtotal: targetItems.reduce(
+        (total, item) => total + item.quantity * item.product.priceValue,
+        0,
+      ),
+      sentAt: new Date().toISOString(),
+    };
+    setRequests((current) => [sent, ...current]);
+
+    const remaining = baskets.filter((basket) => basket.id !== target?.id);
 
     if (remaining.length === 0) {
-      const n = counter.current;
-      counter.current += 1;
-      const fresh = freshBasket(`cesta-${n}`, FIRST_BASKET_NAME);
+      // Lista vazia: reutilizar o id inicial é seguro e preserva a numeração.
+      const fresh = freshBasket(FIRST_BASKET_ID, FIRST_BASKET_NAME);
       setBaskets([fresh]);
       setActiveId(fresh.id);
     } else {
@@ -196,7 +227,7 @@ export function BasketProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    return sentName;
+    return sent;
   }, [baskets, activeId]);
 
   const { items, count, subtotal } = useMemo(() => {
@@ -221,6 +252,7 @@ export function BasketProvider({ children }: { children: ReactNode }) {
       items,
       count,
       subtotal,
+      requests,
       addItem,
       removeItem,
       setQuantity,
@@ -236,6 +268,7 @@ export function BasketProvider({ children }: { children: ReactNode }) {
       items,
       count,
       subtotal,
+      requests,
       addItem,
       removeItem,
       setQuantity,
@@ -267,4 +300,14 @@ export function formatPrice(value: number): string {
     style: "currency",
     currency: "BRL",
   }).format(value);
+}
+
+export function formatDateTime(iso: string): string {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(iso));
 }
