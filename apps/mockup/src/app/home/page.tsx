@@ -1,20 +1,14 @@
 "use client";
 
-import {
-    ArrowRight,
-    Basket,
-    Flower,
-    Gift,
-    Heart,
-    MagnifyingGlass,
-    Package,
-    PencilLine,
-    Plus,
-    ShoppingBag,
-    Storefront,
-    Tag
-} from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
 import { useState } from "react";
+import { ProductCard } from "@/components/product-card";
+import { SectionHeader } from "@/components/section-header";
+import { ServiceBar } from "@/components/service-bar";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { categories, products, type Product } from "@/data/catalog";
 
 /* ------------------------------------------------------------------ */
 /* Dados                                                               */
@@ -57,108 +51,6 @@ const heroCampaigns: HeroCampaign[] = [
       "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=1400&q=90",
   },
 ];
-type Category = {
-  name: string;
-  icon: typeof Basket;
-  tint: string;
-  image: string;
-};
-
-const categories: Category[] = [
-  {
-    name: "Cestas",
-    icon: Basket,
-    tint: "bg-jungle/10 text-jungle",
-    image:
-      "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&w=800&q=90",
-  },
-  {
-    name: "Flores",
-    icon: Flower,
-    tint: "bg-pine/10 text-pine",
-    image:
-      "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=800&q=90",
-  },
-  {
-    name: "Presentes",
-    icon: Gift,
-    tint: "bg-lime/25 text-pine",
-    image:
-      "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=90",
-  },
-  {
-    name: "Escolar",
-    icon: PencilLine,
-    tint: "bg-jungle/10 text-jungle",
-    image:
-      "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=800&q=90",
-  },
-  {
-    name: "Bazar",
-    icon: Storefront,
-    tint: "bg-pine/10 text-pine",
-    image:
-      "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=800&q=90",
-  },
-  {
-    name: "Encomendas",
-    icon: Package,
-    tint: "bg-lime/25 text-pine",
-    image:
-      "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=800&q=90",
-  },
-];
-
-type Product = {
-  id: string;
-  name: string;
-  category: string;
-  price: string;
-  oldPrice?: string;
-  badge?: string;
-  image: string;
-};
-
-const products: Product[] = [
-  {
-    id: "cesta-cafe",
-    name: "Cesta Café da Manhã",
-    category: "Cestas",
-    price: "R$ 89,90",
-    oldPrice: "R$ 109,90",
-    badge: "20% OFF",
-    image:
-      "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=1000&q=90",
-  },
-  {
-    id: "buque-flores",
-    name: "Buquê de Flores da Semana",
-    category: "Flores",
-    price: "R$ 64,90",
-    image:
-      "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1000&q=90",
-  },
-  {
-    id: "kit-presente",
-    name: "Kit Presente Especial",
-    category: "Presentes",
-    price: "R$ 74,90",
-    image:
-      "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=1000&q=90",
-  },
-  {
-    id: "kit-papelaria",
-    name: "Kit Papelaria Criativa",
-    category: "Escolar",
-    price: "R$ 42,90",
-    oldPrice: "R$ 54,90",
-    badge: "20% OFF",
-    image:
-      "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=1000&q=90",
-  },
-];
-
-/* ------------------------------------------------------------------ */
 
 export default function MockupHome() {
   const [heroIndex, setHeroIndex] = useState(0);
@@ -178,7 +70,7 @@ export default function MockupHome() {
     <main className="min-h-svh bg-background text-foreground">
       <ServiceBar />
 
-      <Header favoritesCount={favorites.length} />
+      <SiteHeader favoritesCount={favorites.length} activePath="/home" />
 
       <Hero
         campaign={hero}
@@ -190,7 +82,7 @@ export default function MockupHome() {
         <Categories />
 
         <FeaturedProducts
-          products={products}
+          products={products.slice(0, 4)}
           favorites={favorites}
           onToggleFavorite={toggleFavorite}
         />
@@ -202,121 +94,14 @@ export default function MockupHome() {
         <SeasonalSection />
       </div>
 
-      <Footer />
+      <SiteFooter />
     </main>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* Barra de serviço                                                    */
+/* Hero                                                                */
 /* ------------------------------------------------------------------ */
-
-function ServiceBar() {
-  return (
-    <div className="bg-pine px-6 py-2.5 text-center text-xs font-medium text-platinum">
-      Faça sua solicitação online e continue o atendimento com o Mix Bazar
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Header                                                              */
-/* ------------------------------------------------------------------ */
-
-function Header({ favoritesCount }: { favoritesCount: number }) {
-  return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center gap-5 px-6">
-        <a
-          href="#"
-          className="flex shrink-0 items-center gap-2.5"
-          aria-label="Mix Bazar"
-        >
-          <img
-            src="/LogoMix.svg"
-            alt="Mix Bazar"
-            className="size-12 object-contain"
-          />
-
-        </a>
-
-        <nav className="hidden items-center gap-7 lg:flex">
-          <a
-            href="#inicio"
-            className="text-sm font-medium text-gunmetal transition hover:text-jungle"
-          >
-            Início
-          </a>
-
-          <a
-            href="#categorias"
-            className="text-sm font-medium text-pine transition hover:text-jungle"
-          >
-            Categorias
-          </a>
-
-          <a
-            href="#destaques"
-            className="text-sm font-medium text-pine transition hover:text-jungle"
-          >
-            Destaques
-          </a>
-
-          <a
-            href="#cesta"
-            className="text-sm font-medium text-pine transition hover:text-jungle"
-          >
-            Monte sua cesta
-          </a>
-        </nav>
-
-        <div className="mx-auto hidden h-10 w-full max-w-sm items-center gap-2 rounded-input border border-input bg-background px-3 md:flex lg:max-w-md">
-          <MagnifyingGlass
-            size={18}
-            weight="regular"
-            className="shrink-0 text-pine"
-          />
-
-          <input
-            type="text"
-            placeholder="Buscar produtos..."
-            className="min-w-0 flex-1 bg-transparent text-sm text-gunmetal outline-none placeholder:text-muted-foreground"
-          />
-        </div>
-
-        <div className="ml-auto flex items-center gap-1.5">
-          <button
-            type="button"
-            aria-label="Favoritos"
-            className="relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle"
-          >
-            <Heart size={20} weight="regular" />
-
-            {favoritesCount > 0 && (
-              <span className="absolute right-1 top-1 flex size-2 rounded-full bg-lime ring-2 ring-background" />
-            )}
-          </button>
-
-          <button
-            type="button"
-            aria-label="Minha cesta"
-            className="relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle sm:w-auto sm:gap-2 sm:rounded-button sm:px-3"
-          >
-            <ShoppingBag size={20} weight="regular" />
-
-            <span className="hidden text-sm font-medium sm:block">
-              Minha cesta
-            </span>
-
-            <span className="flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal">
-              2
-            </span>
-          </button>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 function Hero({
   campaign,
@@ -329,7 +114,7 @@ function Hero({
 }) {
   return (
     <section id="inicio" className="relative isolate overflow-hidden bg-jungle">
-      {/* Imagem: metade direita da tela, vaza até a borda */}
+      {/* Imagem: metade direita da tela, vai até a borda */}
       <div className="absolute inset-y-0 right-0 hidden w-1/2 md:block">
         <img
           key={campaign.image}
@@ -352,7 +137,6 @@ function Hero({
       {/* Conteúdo alinhado ao container da página */}
       <div className="mx-auto max-w-7xl px-6">
         <div className="relative z-10 flex flex-col justify-center py-12 md:min-h-[480px] md:w-1/2 md:py-16 md:pr-12">
-
           <h1 className="mt-6 max-w-md font-heading text-4xl font-semibold leading-[1.1] tracking-[-0.03em] text-white lg:text-[2.75rem]">
             {campaign.title}
           </h1>
@@ -403,6 +187,7 @@ function Hero({
     </section>
   );
 }
+
 /* ------------------------------------------------------------------ */
 /* Categorias                                                          */
 /* ------------------------------------------------------------------ */
@@ -417,9 +202,9 @@ function Categories() {
 
       <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-6">
         {categories.map((category) => (
-          <a
+          <Link
             key={category.name}
-            href="#destaques"
+            href="/catalogo"
             className="group relative aspect-[4/5] overflow-hidden rounded-card bg-platinum"
           >
             <img
@@ -435,7 +220,7 @@ function Categories() {
                 {category.name}
               </span>
             </div>
-          </a>
+          </Link>
         ))}
       </div>
     </section>
@@ -461,6 +246,7 @@ function FeaturedProducts({
         title="Produtos em destaque"
         description="Uma seleção de produtos que fazem parte do Mix Bazar."
         action="Ver catálogo"
+        actionHref="/catalogo"
       />
 
       <div className="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
@@ -474,82 +260,6 @@ function FeaturedProducts({
         ))}
       </div>
     </section>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Product Card                                                        */
-/* ------------------------------------------------------------------ */
-
-function ProductCard({
-  product,
-  favored,
-  onToggleFavorite,
-}: {
-  product: Product;
-  favored: boolean;
-  onToggleFavorite: () => void;
-}) {
-  return (
-    <article className="group">
-      <div className="relative aspect-[4/4.5] overflow-hidden rounded-card bg-platinum">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.035]"
-        />
-
-        {product.badge && (
-          <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-button bg-lime px-3 py-1.5 text-xs font-semibold text-gunmetal">
-            <Tag size={12} weight="fill" />
-            {product.badge}
-          </span>
-        )}
-
-        <button
-          type="button"
-          aria-label={`Favoritar ${product.name}`}
-          onClick={onToggleFavorite}
-          className="absolute right-4 top-4 flex size-9 items-center justify-center rounded-full bg-platinum/90 text-pine opacity-0 shadow-sm backdrop-blur transition group-hover:opacity-100 hover:text-jungle focus-visible:opacity-100"
-        >
-          <Heart
-            size={18}
-            weight={favored ? "fill" : "regular"}
-            className={favored ? "text-jungle" : undefined}
-          />
-        </button>
-
-        <button
-          type="button"
-          aria-label={`Adicionar ${product.name} à cesta`}
-          className="absolute bottom-4 right-4 flex size-10 items-center justify-center rounded-full bg-jungle text-platinum opacity-0 shadow-lg transition group-hover:opacity-100 hover:bg-primary-hover focus-visible:opacity-100"
-        >
-          <Plus size={19} weight="bold" />
-        </button>
-      </div>
-
-      <div className="pt-5">
-        <p className="text-xs font-medium text-pine/70">
-          {product.category}
-        </p>
-
-        <h3 className="mt-1 font-heading text-base font-semibold tracking-tight text-gunmetal">
-          {product.name}
-        </h3>
-
-        <div className="mt-2 flex items-baseline gap-2">
-          {product.oldPrice && (
-            <span className="text-sm text-muted-foreground line-through">
-              {product.oldPrice}
-            </span>
-          )}
-
-          <span className="font-heading text-base font-semibold text-gunmetal">
-            {product.price}
-          </span>
-        </div>
-      </div>
-    </article>
   );
 }
 
@@ -596,9 +306,7 @@ function CustomBasket() {
                   {index + 1}
                 </span>
 
-                <span className="text-sm text-platinum/85">
-                  {step}
-                </span>
+                <span className="text-sm text-platinum/85">{step}</span>
               </li>
             ))}
           </ol>
@@ -659,8 +367,8 @@ function SeasonalSection() {
   return (
     <section className="border-t border-border py-20 md:py-24">
       <div className="grid gap-6 md:grid-cols-[1.35fr_0.65fr]">
-        <a
-          href="#"
+        <Link
+          href="/catalogo"
           className="group relative min-h-[300px] overflow-hidden rounded-card"
         >
           <img
@@ -685,10 +393,10 @@ function SeasonalSection() {
               <ArrowRight size={15} />
             </span>
           </div>
-        </a>
+        </Link>
 
-        <a
-          href="#"
+        <Link
+          href="/catalogo"
           className="group relative min-h-[300px] overflow-hidden rounded-card"
         >
           <img
@@ -713,129 +421,8 @@ function SeasonalSection() {
               <ArrowRight size={15} />
             </span>
           </div>
-        </a>
+        </Link>
       </div>
     </section>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Section Header                                                      */
-/* ------------------------------------------------------------------ */
-
-function SectionHeader({
-  eyebrow,
-  title,
-  description,
-  action,
-}: {
-  eyebrow?: string;
-  title: string;
-  description: string;
-  action?: string;
-}) {
-  return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-      <div>
-        {eyebrow && (
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-jungle">
-            {eyebrow}
-          </p>
-        )}
-
-        <h2 className="mt-1 font-heading text-3xl font-semibold tracking-tight text-gunmetal md:text-4xl">
-          {title}
-        </h2>
-
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-pine/70 md:text-base">
-          {description}
-        </p>
-      </div>
-
-      {action && (
-        <button
-          type="button"
-          className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-jungle transition hover:text-pine"
-        >
-          {action}
-          <ArrowRight size={15} />
-        </button>
-      )}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Footer                                                              */
-/* ------------------------------------------------------------------ */
-
-function Footer() {
-  return (
-    <footer className="border-t border-border bg-card">
-      <div className="mx-auto max-w-7xl px-6 py-12">
-        <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
-          <div>
-            <a
-              href="#"
-              className="flex items-center gap-2.5"
-              aria-label="Mix Bazar"
-            >
-              <img
-                src="/logo.svg"
-                alt="Mix Bazar"
-                className="size-8 object-contain"
-              />
-
-              <span className="font-heading text-base font-semibold text-gunmetal">
-                Mix Bazar
-              </span>
-            </a>
-
-            <p className="mt-4 max-w-sm text-sm leading-6 text-pine/65">
-              Cestas, flores, presentes e produtos para diferentes momentos.
-              Encontre o que procura e envie sua solicitação.
-            </p>
-          </div>
-
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-pine">
-              Categorias
-            </p>
-
-            <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-pine/70">
-              {categories.map((category) => (
-                <li key={category.name}>
-                  <a
-                    href="#categorias"
-                    className="transition hover:text-jungle"
-                  >
-                    {category.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-pine">
-              Atendimento
-            </p>
-
-            <ul className="mt-4 grid gap-2 text-sm text-pine/70">
-              <li>Segunda a sábado</li>
-              <li>Consulte os horários do estabelecimento</li>
-              <li>Solicitações pelo site e atendimento externo</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-10 border-t border-border pt-6">
-          <p className="text-xs text-pine/50">
-            © {new Date().getFullYear()} Mix Bazar. Todos os direitos
-            reservados.
-          </p>
-        </div>
-      </div>
-    </footer>
   );
 }
