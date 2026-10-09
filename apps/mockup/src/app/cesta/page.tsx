@@ -14,7 +14,12 @@ import { useRef, useState } from "react";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { formatPrice, MAX_BASKETS, useBasket } from "@/context/basket";
+import {
+  formatPrice,
+  MAX_BASKETS,
+  useBasket,
+  type Solicitation,
+} from "@/context/basket";
 
 export default function CestaPage() {
   const {
@@ -31,7 +36,7 @@ export default function CestaPage() {
     deleteBasket,
     sendActiveBasket,
   } = useBasket();
-  const [sentName, setSentName] = useState<string | null>(null);
+  const [sent, setSent] = useState<Solicitation | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
   const cancelRename = useRef(false);
@@ -44,7 +49,7 @@ export default function CestaPage() {
   }
 
   function sendRequest() {
-    setSentName(sendActiveBasket());
+    setSent(sendActiveBasket());
   }
 
   function startRename() {
@@ -64,11 +69,8 @@ export default function CestaPage() {
       <SiteHeader favoritesCount={0} activePath="/cesta" />
 
       <div className="mx-auto max-w-7xl px-6">
-        {sentName !== null ? (
-          <Confirmation
-            basketName={sentName}
-            onBack={() => setSentName(null)}
-          />
+        {sent !== null ? (
+          <Confirmation basketName={sent.name} onBack={() => setSent(null)} />
         ) : (
           <>
             <section className="pb-10 pt-12 md:pb-12 md:pt-16">
@@ -129,9 +131,7 @@ export default function CestaPage() {
                 <button
                   type="button"
                   aria-label="Criar nova cesta"
-                  title={
-                    atMax ? "Limite de 5 cestas atingido" : undefined
-                  }
+                  title={atMax ? "Limite de 5 cestas atingido" : undefined}
                   disabled={atMax}
                   onClick={createBasket}
                   className="inline-flex shrink-0 items-center gap-1.5 rounded-button border border-border bg-background px-4 py-2 text-sm font-medium text-pine transition hover:border-jungle hover:text-jungle disabled:cursor-not-allowed disabled:opacity-40"
@@ -425,6 +425,13 @@ function Confirmation({
         >
           Ver minhas cestas
         </button>
+
+        <Link
+          href="/solicitacoes"
+          className="inline-flex items-center gap-2 rounded-button border border-border bg-background px-6 py-3.5 text-sm font-medium text-gunmetal transition hover:bg-muted"
+        >
+          Ver minhas solicitações
+        </Link>
       </div>
     </div>
   );
