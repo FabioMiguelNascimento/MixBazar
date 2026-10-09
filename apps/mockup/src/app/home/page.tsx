@@ -381,7 +381,7 @@ function Hero({
           <div className="mt-10 flex items-center gap-1">
             {heroCampaigns.map((item, index) => (
               <button
-                key={item.eyebrow}
+                key={item.title}
                 type="button"
                 aria-label={`Ver campanha ${index + 1}`}
                 aria-current={index === campaignIndex}
