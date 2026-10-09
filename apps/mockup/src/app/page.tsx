@@ -1,4 +1,4 @@
-import { ArrowRight } from "@phosphor-icons/react";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
 export default function HomePage() {
