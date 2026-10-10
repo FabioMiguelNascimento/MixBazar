@@ -9,12 +9,11 @@ export const bannedCopy = [
   "finalizar compra",
   "finalizar pedido",
   "finalizar carrinho",
-  "carrinho de compras",
   "checkout",
 ];
 
 export const bannedCopyMessage =
-  "Mix Bazar não tem checkout: use 'Adicionar à cesta' e 'Enviar solicitação'. Ver design.md §1/§12.";
+  "Mix Bazar não tem checkout: use 'Adicionar à cesta', 'Fazer pedido' e 'Carrinho'. Ver design.md §1/§12.";
 
 export const bannedIconPackages = [
   "lucide-react",

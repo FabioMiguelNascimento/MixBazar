@@ -157,7 +157,8 @@ Sempre gradiente `bg-gradient-to-t from-gunmetal/80 via-gunmetal/10 to-transpare
 - Um botão primário Jungle por tela; Lime para destaque/promoção.
 - Imagem protagonista e moldura leve (ou nenhuma) nos cards.
 - Reusar `SectionHeader`, `ProductCard`, `rounded-*` e a escala `2xs…3xl` de `@repo/ui`.
-- Copy de "pedido/atendimento", não de checkout.
+- Copy de "pedido/cesta/carrinho/atendimento", não de checkout.
+- Cesta × carrinho: cesta agrupa e customiza um item (como adicionais do iFood); carrinho coleciona produtos e cestas para o pedido.
 
 **Não faça:**
 - Botão "Comprar agora"/"Finalizar compra" — o fluxo real é adicionar à cesta → fazer pedido.
