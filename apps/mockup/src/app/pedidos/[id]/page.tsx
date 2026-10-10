@@ -19,12 +19,12 @@ export default function PedidoPage() {
   const order = orders.find((item) => item.id === id);
 
   return (
-    <main className="min-h-svh bg-background text-foreground">
+    <main className="flex min-h-svh flex-col bg-background text-foreground">
       <ServiceBar />
 
       <SiteHeader favoritesCount={0} activePath="/pedidos" />
 
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-6">
         {!order ? (
           <div className="flex flex-col items-center py-24 text-center">
             <Package size={56} weight="duotone" className="text-pine" />

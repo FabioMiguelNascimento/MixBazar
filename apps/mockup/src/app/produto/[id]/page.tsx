@@ -50,12 +50,12 @@ export default function ProdutoPage() {
     .slice(0, 4);
 
   return (
-    <main className="min-h-svh bg-background text-foreground">
+    <main className="flex min-h-svh flex-col bg-background text-foreground">
       <ServiceBar />
 
       <SiteHeader favoritesCount={favorites.length} activePath={pathname} />
 
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-6">
         {!product ? (
           <div className="flex flex-col items-center py-24 text-center">
             <Package size={56} weight="duotone" className="text-pine" />

@@ -71,7 +71,7 @@ export default function MockupHome() {
   const hero = heroCampaigns[heroIndex];
 
   return (
-    <main className="min-h-svh bg-background text-foreground">
+    <main className="flex min-h-svh flex-col bg-background text-foreground">
       <ServiceBar />
 
       <SiteHeader favoritesCount={favorites.length} activePath="/home" />
@@ -82,7 +82,7 @@ export default function MockupHome() {
         onCampaignChange={setHeroIndex}
       />
 
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-6">
         <Categories />
 
         <FeaturedProducts

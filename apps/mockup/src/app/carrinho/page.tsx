@@ -20,12 +20,12 @@ export default function CarrinhoPage() {
   const { lines, count, subtotal, setQty, removeLine } = useCart();
 
   return (
-    <main className="min-h-svh bg-background text-foreground">
+    <main className="flex min-h-svh flex-col bg-background text-foreground">
       <ServiceBar />
 
       <SiteHeader favoritesCount={0} activePath="/carrinho" />
 
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-6">
         {lines.length === 0 ? (
           <div className="flex flex-col items-center py-20 text-center md:py-24">
             <ShoppingCart size={56} weight="duotone" className="text-pine" />

@@ -53,12 +53,12 @@ export default function CatalogoPage() {
   const hasMore = visibleCount < visible.length;
 
   return (
-    <main className="min-h-svh bg-background text-foreground">
+    <main className="flex min-h-svh flex-col bg-background text-foreground">
       <ServiceBar />
 
       <SiteHeader favoritesCount={favorites.length} activePath="/catalogo" />
 
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-6">
         <section className="pb-10 pt-12 md:pb-12 md:pt-16">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-jungle">
             Mix Bazar

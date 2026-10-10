@@ -38,12 +38,12 @@ export default function FavoritosPage() {
   }
 
   return (
-    <main className="min-h-svh bg-background text-foreground">
+    <main className="flex min-h-svh flex-col bg-background text-foreground">
       <ServiceBar />
 
       <SiteHeader favoritesCount={favorites.length} activePath="/conta" />
 
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-6">
         <nav
           aria-label="Trilha de navegação"
           className="flex flex-wrap items-center gap-1.5 py-5 text-sm text-pine"
