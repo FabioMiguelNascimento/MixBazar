@@ -4,9 +4,11 @@ import {
   CaretRight,
   ClipboardText,
   Heart,
+  SignOut,
   UserCircle,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -14,8 +16,9 @@ import { useBasket } from "@/context/basket";
 import { useCustomer } from "@/context/customer";
 
 export default function ContaPage() {
-  const { profile, favorites } = useCustomer();
+  const { profile, favorites, logout } = useCustomer();
   const { orders } = useBasket();
+  const router = useRouter();
 
   const initials = profile.name
     .split(" ")
@@ -121,8 +124,39 @@ export default function ContaPage() {
                 </li>
               );
             })}
-          </ul>
-        </nav>
+            </ul>
+
+            <button
+              type="button"
+              onClick={() => {
+                logout();
+                router.push("/login");
+              }}
+              className="mt-3 flex w-full items-center gap-4 rounded-card border border-border bg-background px-5 py-4 transition hover:border-jungle md:max-w-2xl"
+            >
+              <SignOut
+                size={22}
+                weight="regular"
+                className="shrink-0 text-pine"
+              />
+
+              <span className="min-w-0 flex-1 text-left">
+                <span className="block font-heading text-base font-semibold text-gunmetal">
+                  Sair
+                </span>
+
+                <span className="mt-0.5 block truncate text-sm text-pine/70">
+                  Encerrar a sessão atual
+                </span>
+              </span>
+
+              <CaretRight
+                size={18}
+                weight="bold"
+                className="shrink-0 text-pine/40"
+              />
+            </button>
+          </nav>
       </div>
 
       <SiteFooter />

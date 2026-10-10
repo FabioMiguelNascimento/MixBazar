@@ -9,6 +9,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useBasket } from "@/context/basket";
+import { useCustomer } from "@/context/customer";
 
 const navItems = [
   { label: "Início", href: "/home" },
@@ -26,6 +27,7 @@ export function SiteHeader({
   activePath: string;
 }) {
   const { count, orders } = useBasket();
+  const { isLoggedIn } = useCustomer();
 
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
@@ -129,8 +131,8 @@ export function SiteHeader({
           </Link>
 
           <Link
-            href="/conta"
-            aria-label="Minha conta"
+            href={isLoggedIn ? "/conta" : "/login"}
+            aria-label={isLoggedIn ? "Minha conta" : "Entrar"}
             aria-current={activePath === "/conta" ? "page" : undefined}
             className="relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle"
           >

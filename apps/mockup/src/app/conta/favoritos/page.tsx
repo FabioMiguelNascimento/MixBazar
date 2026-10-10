@@ -6,6 +6,8 @@ import {
   Heart,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { ProductCard } from "@/components/product-card";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
@@ -15,12 +17,24 @@ import { useCustomer } from "@/context/customer";
 import { products } from "@/data/catalog";
 
 export default function FavoritosPage() {
-  const { favorites, toggleFavorite } = useCustomer();
+  const { favorites, toggleFavorite, isLoggedIn } = useCustomer();
   const { addItem } = useBasket();
 
   const favoriteProducts = products.filter((product) =>
     favorites.includes(product.id),
   );
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.replace("/login");
+    }
+  }, [isLoggedIn, router]);
+
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
     <main className="min-h-svh bg-background text-foreground">

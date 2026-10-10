@@ -2,7 +2,8 @@
 
 import { CaretRight, PencilLine } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -19,7 +20,7 @@ const PROFILE_FIELDS = [
 ] as const;
 
 export default function DadosPage() {
-  const { profile, updateProfile, favorites } = useCustomer();
+  const { profile, updateProfile, favorites, isLoggedIn } = useCustomer();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<CustomerProfile>(profile);
 
@@ -35,6 +36,18 @@ export default function DadosPage() {
   function saveEdit() {
     updateProfile({ ...draft, name: draft.name.trim() || profile.name });
     setEditing(false);
+  }
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.replace("/login");
+    }
+  }, [isLoggedIn, router]);
+
+  if (!isLoggedIn) {
+    return null;
   }
 
   return (
