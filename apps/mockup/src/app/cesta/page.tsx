@@ -18,7 +18,7 @@ import {
   formatPrice,
   MAX_BASKETS,
   useBasket,
-  type Solicitation,
+  type Order,
 } from "@/context/basket";
 
 export default function CestaPage() {
@@ -36,7 +36,7 @@ export default function CestaPage() {
     deleteBasket,
     sendActiveBasket,
   } = useBasket();
-  const [sent, setSent] = useState<Solicitation | null>(null);
+  const [sent, setSent] = useState<Order | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
   const cancelRename = useRef(false);
@@ -70,7 +70,11 @@ export default function CestaPage() {
 
       <div className="mx-auto max-w-7xl px-6">
         {sent !== null ? (
-          <Confirmation basketName={sent.name} onBack={() => setSent(null)} />
+          <Confirmation
+            number={sent.number}
+            basketName={sent.name}
+            onBack={() => setSent(null)}
+          />
         ) : (
           <>
             <section className="pb-10 pt-12 md:pb-12 md:pt-16">
@@ -83,8 +87,8 @@ export default function CestaPage() {
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-6 text-pine/70 md:text-base">
-                Gerencie suas cestas e envie uma solicitação por vez — o Mix
-                Bazar confirma tudo pelo atendimento.
+                Gerencie suas cestas e faça um pedido por vez — o Mix Bazar
+                confirma tudo pelo atendimento.
               </p>
             </section>
 
@@ -358,8 +362,8 @@ export default function CestaPage() {
                   </dl>
 
                   <p className="mt-4 text-xs leading-5 text-pine/70">
-                    O Mix Bazar confirma sua solicitação pelo atendimento
-                    antes de separar os produtos.
+                    O Mix Bazar confirma seu pedido pelo atendimento antes
+                    de separar os produtos.
                   </p>
 
                   <button
@@ -367,7 +371,7 @@ export default function CestaPage() {
                     onClick={sendRequest}
                     className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-button bg-jungle px-6 py-4 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
                   >
-                    Enviar solicitação
+                    Fazer pedido
                     <ArrowRight size={17} />
                   </button>
 
@@ -390,9 +394,11 @@ export default function CestaPage() {
 }
 
 function Confirmation({
+  number,
   basketName,
   onBack,
 }: {
+  number: number;
   basketName: string;
   onBack: () => void;
 }) {
@@ -401,12 +407,12 @@ function Confirmation({
       <CheckCircle size={64} weight="duotone" className="text-jungle" />
 
       <h1 className="mt-6 font-heading text-2xl font-semibold tracking-tight text-gunmetal md:text-3xl">
-        Solicitação enviada
+        Pedido enviado
       </h1>
 
       <p className="mt-3 max-w-md text-sm leading-6 text-pine/70 md:text-base">
-        A cesta “{basketName}” foi enviada e o Mix Bazar vai confirmar tudo
-        pelo atendimento.
+        Sua cesta “{basketName}” foi enviada como o pedido #{number}. O Mix
+        Bazar vai confirmar tudo pelo atendimento.
       </p>
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -427,10 +433,10 @@ function Confirmation({
         </button>
 
         <Link
-          href="/solicitacoes"
+          href="/pedidos"
           className="inline-flex items-center gap-2 rounded-button border border-border bg-background px-6 py-3.5 text-sm font-medium text-gunmetal transition hover:bg-muted"
         >
-          Ver minhas solicitações
+          Ver meus pedidos
         </Link>
       </div>
     </div>
