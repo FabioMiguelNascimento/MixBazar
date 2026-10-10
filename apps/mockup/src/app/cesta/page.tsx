@@ -4,13 +4,13 @@ import {
   ArrowDown,
   ArrowRight,
   Check,
-  CheckCircle,
   Minus,
   PencilLine,
   Plus,
   ShoppingBag,
   ShoppingCart,
   Trash,
+  X,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useRef, useState } from "react";
@@ -22,10 +22,13 @@ import {
   formatPrice,
   MAX_BASKETS,
   useBasket,
-  type Order,
 } from "@/context/basket";
 import { useCart } from "@/context/cart";
-import { products, type Product } from "@/data/catalog";
+import {
+  complementGroups,
+  products,
+  type Product,
+} from "@/data/catalog";
 import { SwapIcon } from "@/components/swap-icon";
 import { useJustAdded } from "@/hooks/use-just-added";
 import { Button, buttonStyles } from "@repo/ui";
@@ -126,18 +129,18 @@ export default function CestaPage() {
     baskets,
     activeId,
     items,
+    complements,
     count,
     subtotal,
     setQuantity,
     removeItem,
+    removeComplement,
     createBasket,
     switchBasket,
     renameBasket,
     deleteBasket,
-    sendActiveBasket,
   } = useBasket();
   const { addBasket } = useCart();
-  const [sent, setSent] = useState<Order | null>(null);
   const [justAddedBasket, triggerBasketAdded] = useJustAdded();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
@@ -148,10 +151,6 @@ export default function CestaPage() {
 
   if (!active) {
     return null;
-  }
-
-  function sendRequest() {
-    setSent(sendActiveBasket());
   }
 
   function startRename() {
@@ -171,14 +170,6 @@ export default function CestaPage() {
       <SiteHeader favoritesCount={0} activePath="/cesta" />
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-6">
-        {sent !== null ? (
-          <Confirmation
-            number={sent.number}
-            basketName={sent.name}
-            onBack={() => setSent(null)}
-          />
-        ) : (
-          <>
             <section className="pb-10 pt-12 md:pb-12 md:pt-16">
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-jungle">
                 Suas cestas
@@ -458,6 +449,45 @@ export default function CestaPage() {
                       />
                     </li>
                   ))}
+                  {complements.map((line) => (
+                    <li
+                      key={line.option.id}
+                      className="flex items-center gap-3 py-4"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="size-2.5 shrink-0 rounded-full bg-jungle"
+                      />
+
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-gunmetal">
+                          {line.option.name}
+                        </p>
+
+                        <p className="text-xs text-pine/70">
+                          {
+                            complementGroups.find(
+                              (group) => group.id === line.groupId,
+                            )?.name
+                          }
+                        </p>
+                      </div>
+
+                      <span className="shrink-0 text-sm font-medium text-gunmetal">
+                        {line.option.price}
+                      </span>
+
+                      <Button
+                        iconOnly
+                        tone="ghost"
+                        iconSize="sm"
+                        label={`Remover ${line.option.name} da cesta`}
+                        onClick={() => removeComplement(line.option.id)}
+                        className="shrink-0"
+                        icon={<X size={14} />}
+                      />
+                    </li>
+                  ))}
                 </ul>
 
                 <aside className="h-fit rounded-card bg-platinum p-6 md:p-7 lg:sticky lg:top-24">
@@ -488,15 +518,17 @@ export default function CestaPage() {
                     de separar os produtos.
                   </p>
 
-                  <Button
-                    variant="primary"
-                    size="xl"
-                    onClick={sendRequest}
-                    className="mt-5 w-full"
+                  <Link
+                    href="/cesta/complementos"
+                    className={buttonStyles({
+                      variant: "primary",
+                      size: "xl",
+                      className: "mt-5 w-full",
+                    })}
                   >
                     Fazer pedido
                     <ArrowRight size={17} />
-                  </Button>
+                  </Link>
 
                   <Button
                     variant="outline"
@@ -536,10 +568,7 @@ export default function CestaPage() {
                 </aside>
               </div>
             )}
-          </>
-        )}
 
-        {sent === null && (
           <section
             id="adicionar-produtos"
             className="scroll-mt-24 border-t border-border py-20 md:py-24"
@@ -564,7 +593,6 @@ export default function CestaPage() {
             ))}
           </ul>
         </section>
-        )}
       </div>
 
       <SiteFooter />
@@ -572,48 +600,3 @@ export default function CestaPage() {
   );
 }
 
-function Confirmation({
-  number,
-  basketName,
-  onBack,
-}: {
-  number: number;
-  basketName: string;
-  onBack: () => void;
-}) {
-  return (
-    <div className="flex flex-col items-center py-20 text-center md:py-24">
-      <CheckCircle size={64} weight="duotone" className="text-jungle" />
-
-      <h1 className="mt-6 font-heading text-2xl font-semibold tracking-tight text-gunmetal md:text-3xl">
-        Pedido enviado
-      </h1>
-
-      <p className="mt-3 max-w-md text-sm leading-6 text-pine/70 md:text-base">
-        Sua cesta “{basketName}” foi enviada como o pedido #{number}. O Mix
-        Bazar vai confirmar tudo pelo atendimento.
-      </p>
-
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-        <Link
-          href="/catalogo"
-          className={buttonStyles({ variant: "primary", size: "lg" })}
-        >
-          Voltar ao catálogo
-          <ArrowRight size={17} />
-        </Link>
-
-        <Button variant="outline" size="lg" onClick={onBack}>
-          Ver minhas cestas
-        </Button>
-
-        <Link
-          href="/pedidos"
-          className={buttonStyles({ variant: "outline", size: "lg" })}
-        >
-          Ver meus pedidos
-        </Link>
-      </div>
-    </div>
-  );
-}

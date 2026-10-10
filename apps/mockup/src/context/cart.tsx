@@ -8,7 +8,11 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Basket, BasketItem } from "@/context/basket";
+import type {
+  Basket,
+  BasketItem,
+  ComplementLine,
+} from "@/context/basket";
 import type { Product } from "@/data/catalog";
 
 /* ------------------------------------------------------------------ */
@@ -28,6 +32,7 @@ export type CartLine = {
   unitPrice: number;
   qty: number;
   items?: BasketItem[];
+  complements?: ComplementLine[];
 };
 
 type CartContextValue = {
@@ -44,9 +49,15 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 
 function basketUnitPrice(basket: Basket): number {
-  return basket.items.reduce(
-    (total, item) => total + item.quantity * item.product.priceValue,
-    0,
+  return (
+    basket.items.reduce(
+      (total, item) => total + item.quantity * item.product.priceValue,
+      0,
+    ) +
+    basket.complements.reduce(
+      (total, line) => total + line.option.priceValue,
+      0,
+    )
   );
 }
 
@@ -88,6 +99,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       image: basket.items[0]?.product.images[0] ?? "",
       unitPrice: basketUnitPrice(basket),
       items: basket.items.map((item) => ({ ...item })),
+      complements: basket.complements.map((line) => ({
+        ...line,
+        option: { ...line.option },
+      })),
     };
     setLines((current) => {
       const existing = current.find((line) => line.id === id);

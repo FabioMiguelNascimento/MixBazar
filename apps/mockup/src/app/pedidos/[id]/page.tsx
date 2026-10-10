@@ -11,6 +11,7 @@ import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { formatDateTime, formatPrice, useBasket } from "@/context/basket";
+import { complementGroups } from "@/data/catalog";
 import { buttonStyles } from "@repo/ui";
 
 export default function PedidoPage() {
@@ -126,6 +127,42 @@ export default function PedidoPage() {
                   </li>
                 ))}
               </ul>
+
+              {order.complements.length > 0 && (
+                <div className="mt-6 border-t border-border pt-6 lg:col-start-1 lg:row-start-2 lg:mt-0">
+                  <h2 className="font-heading text-base font-semibold tracking-tight text-gunmetal">
+                    Complementos
+                  </h2>
+
+                  <ul
+                    aria-label="Complementos do pedido"
+                    className="mt-3 space-y-3"
+                  >
+                    {order.complements.map((line) => (
+                      <li
+                        key={line.option.id}
+                        className="flex items-center justify-between gap-4 text-sm"
+                      >
+                        <p className="text-pine">
+                          {line.option.name}{" "}
+                          <span className="text-pine/70">
+                            ·{" "}
+                            {
+                              complementGroups.find(
+                                (group) => group.id === line.groupId,
+                              )?.name
+                            }
+                          </span>
+                        </p>
+
+                        <span className="shrink-0 font-medium text-gunmetal">
+                          {line.option.price}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               <aside className="h-fit rounded-card bg-platinum p-6 md:p-7 lg:sticky lg:top-24">
                 <h2 className="font-heading text-xl font-semibold tracking-tight text-gunmetal">

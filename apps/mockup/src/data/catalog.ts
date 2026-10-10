@@ -273,3 +273,131 @@ export const recommendedIds = [
   "caneca-artesanal",
   "kit-presente",
 ];
+
+/* ------------------------------------------------------------------ */
+/* Complementos da cesta — grupos single-select estilo adicionais do  */
+/* iFood: no máximo uma opção por grupo em cada cesta.                 */
+/* ------------------------------------------------------------------ */
+
+export type ComplementOption = {
+  id: string;
+  name: string;
+  detail: string;
+  price: string;
+  priceValue: number;
+};
+
+export type ComplementGroup = {
+  id: "caixa" | "embrulho" | "fita" | "cartao";
+  name: string;
+  hint: string;
+  options: ComplementOption[];
+};
+
+export const complementGroups: ComplementGroup[] = [
+  {
+    id: "caixa",
+    name: "Caixa",
+    hint: "Escolha uma",
+    options: [
+      {
+        id: "caixa-kraft",
+        name: "Caixa kraft",
+        detail: "Papelão rígido 20 × 20 cm",
+        price: "R$ 8,00",
+        priceValue: 8,
+      },
+      {
+        id: "caixa-presente",
+        name: "Caixa presente",
+        detail: "Estampada 25 × 25 cm",
+        price: "R$ 12,00",
+        priceValue: 12,
+      },
+      {
+        id: "cesta-vime",
+        name: "Cesta de vime",
+        detail: "Artesanal com alça",
+        price: "R$ 24,00",
+        priceValue: 24,
+      },
+    ],
+  },
+  {
+    id: "embrulho",
+    name: "Embrulho",
+    hint: "Escolha um",
+    options: [
+      {
+        id: "embrulho-kraft",
+        name: "Papel kraft",
+        detail: "Com tag do Mix Bazar",
+        price: "R$ 4,00",
+        priceValue: 4,
+      },
+      {
+        id: "embrulho-presente",
+        name: "Papel presente",
+        detail: "Estampas da semana",
+        price: "R$ 6,00",
+        priceValue: 6,
+      },
+      {
+        id: "embrulho-tecido",
+        name: "Tecido furoshiki",
+        detail: "Reutilizável",
+        price: "R$ 14,00",
+        priceValue: 14,
+      },
+    ],
+  },
+  {
+    id: "fita",
+    name: "Fita",
+    hint: "Escolha uma",
+    options: [
+      {
+        id: "fita-cetim",
+        name: "Cetim",
+        detail: "Cores sortidas",
+        price: "R$ 3,00",
+        priceValue: 3,
+      },
+      {
+        id: "fita-rustica",
+        name: "Rústica de juta",
+        detail: "Acabamento natural",
+        price: "R$ 3,00",
+        priceValue: 3,
+      },
+      {
+        id: "laco-pronto",
+        name: "Laço pronto",
+        detail: "Grande, montado à mão",
+        price: "R$ 7,00",
+        priceValue: 7,
+      },
+    ],
+  },
+  {
+    id: "cartao",
+    name: "Cartão",
+    hint: "Escolha um",
+    options: [
+      {
+        id: "cartao-simples",
+        name: "Cartão simples",
+        detail: "Com mensagem padrão",
+        price: "R$ 5,00",
+        priceValue: 5,
+      },
+      {
+        id: "cartao-premium",
+        name: "Cartão premium",
+        detail: "Relevo com envelope",
+        price: "R$ 9,00",
+        priceValue: 9,
+      },
+    ],
+  },
+];

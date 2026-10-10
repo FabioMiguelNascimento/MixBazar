@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Product } from "@/data/catalog";
+import type { ComplementOption, Product } from "@/data/catalog";
 
 /* ------------------------------------------------------------------ */
 /* Cestas do mockup — vários rascunhos nomeados por comprador, com uma */
@@ -23,10 +23,16 @@ export type BasketItem = {
   quantity: number;
 };
 
+export type ComplementLine = {
+  groupId: string;
+  option: ComplementOption;
+};
+
 export type Basket = {
   id: string;
   name: string;
   items: BasketItem[];
+  complements: ComplementLine[];
 };
 
 export type Order = {
@@ -34,6 +40,7 @@ export type Order = {
   number: number;
   name: string;
   items: BasketItem[];
+  complements: ComplementLine[];
   count: number;
   subtotal: number;
   sentAt: string;
@@ -43,12 +50,15 @@ type BasketContextValue = {
   baskets: Basket[];
   activeId: string;
   items: BasketItem[];
+  complements: ComplementLine[];
   count: number;
   subtotal: number;
   orders: Order[];
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
+  toggleComplement: (groupId: string, option: ComplementOption) => void;
+  removeComplement: (optionId: string) => void;
   createBasket: () => void;
   switchBasket: (id: string) => void;
   renameBasket: (id: string, name: string) => void;
@@ -62,7 +72,7 @@ const FIRST_BASKET_NAME = "Minha cesta";
 export const MAX_BASKETS = 5;
 
 function freshBasket(id: string, name: string): Basket {
-  return { id, name, items: [] };
+  return { id, name, items: [], complements: [] };
 }
 
 function updateItems(
@@ -189,6 +199,46 @@ export function BasketProvider({ children }: { children: ReactNode }) {
     [baskets, activeId],
   );
 
+  const toggleComplement = useCallback(
+    (groupId: string, option: ComplementOption) => {
+      setBaskets((current) =>
+        current.map((basket) => {
+          if (basket.id !== activeId) {
+            return basket;
+          }
+          const selected = basket.complements.some(
+            (line) => line.option.id === option.id,
+          );
+          return {
+            ...basket,
+            complements: selected
+              ? basket.complements.filter(
+                  (line) => line.option.id !== option.id,
+                )
+              : [
+                  ...basket.complements.filter(
+                    (line) => line.groupId !== groupId,
+                  ),
+                  { groupId, option },
+                ],
+          };
+        }),
+      );
+    },
+    [activeId],
+  );
+
+  const removeComplement = useCallback((optionId: string) => {
+    setBaskets((current) =>
+      current.map((basket) => ({
+        ...basket,
+        complements: basket.complements.filter(
+          (line) => line.option.id !== optionId,
+        ),
+      })),
+    );
+  }, []);
+
   const sendActiveBasket = useCallback(() => {
     const target =
       baskets.find((basket) => basket.id === activeId) ?? baskets[0];
@@ -201,11 +251,20 @@ export function BasketProvider({ children }: { children: ReactNode }) {
       number,
       name: target?.name ?? FIRST_BASKET_NAME,
       items: targetItems,
+      complements: (target?.complements ?? []).map((line) => ({
+        ...line,
+        option: { ...line.option },
+      })),
       count: targetItems.reduce((total, item) => total + item.quantity, 0),
-      subtotal: targetItems.reduce(
-        (total, item) => total + item.quantity * item.product.priceValue,
-        0,
-      ),
+      subtotal:
+        targetItems.reduce(
+          (total, item) => total + item.quantity * item.product.priceValue,
+          0,
+        ) +
+        (target?.complements ?? []).reduce(
+          (total, line) => total + line.option.priceValue,
+          0,
+        ),
       sentAt: new Date().toISOString(),
     };
     setOrders((current) => [sent, ...current]);
@@ -230,18 +289,21 @@ export function BasketProvider({ children }: { children: ReactNode }) {
     return sent;
   }, [baskets, activeId]);
 
-  const { items, count, subtotal } = useMemo(() => {
+  const { items, complements, count, subtotal } = useMemo(() => {
     const active =
       baskets.find((basket) => basket.id === activeId) ?? baskets[0];
     const list = active?.items ?? [];
+    const extras = active?.complements ?? [];
 
     return {
       items: list,
+      complements: extras,
       count: list.reduce((total, item) => total + item.quantity, 0),
-      subtotal: list.reduce(
-        (total, item) => total + item.quantity * item.product.priceValue,
-        0,
-      ),
+      subtotal:
+        list.reduce(
+          (total, item) => total + item.quantity * item.product.priceValue,
+          0,
+        ) + extras.reduce((total, line) => total + line.option.priceValue, 0),
     };
   }, [baskets, activeId]);
 
@@ -250,12 +312,15 @@ export function BasketProvider({ children }: { children: ReactNode }) {
       baskets,
       activeId,
       items,
+      complements,
       count,
       subtotal,
       orders,
       addItem,
       removeItem,
       setQuantity,
+      toggleComplement,
+      removeComplement,
       createBasket,
       switchBasket,
       renameBasket,
@@ -266,12 +331,15 @@ export function BasketProvider({ children }: { children: ReactNode }) {
       baskets,
       activeId,
       items,
+      complements,
       count,
       subtotal,
       orders,
       addItem,
       removeItem,
       setQuantity,
+      toggleComplement,
+      removeComplement,
       createBasket,
       switchBasket,
       renameBasket,
