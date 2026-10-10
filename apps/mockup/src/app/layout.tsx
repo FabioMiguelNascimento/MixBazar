@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Montserrat } from "next/font/google";
 import { BasketProvider } from "@/context/basket";
+import { CartProvider } from "@/context/cart";
 import { CustomerProvider } from "@/context/customer";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -26,9 +28,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${montserrat.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <CustomerProvider>
-          <BasketProvider>{children}</BasketProvider>
-        </CustomerProvider>
+        <TooltipProvider>
+          <CustomerProvider>
+            <CartProvider>
+              <BasketProvider>{children}</BasketProvider>
+            </CartProvider>
+          </CustomerProvider>
+        </TooltipProvider>
       </body>
     </html>
   );

@@ -1,15 +1,19 @@
 "use client";
 
+import { Tooltip } from "@/components/ui/tooltip";
+import { useBasket } from "@/context/basket";
+import { useCart } from "@/context/cart";
+import { useCustomer } from "@/context/customer";
 import {
   ClipboardText,
   Heart,
   MagnifyingGlass,
   ShoppingBag,
+  ShoppingCart,
   UserCircle,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { useBasket } from "@/context/basket";
-import { useCustomer } from "@/context/customer";
+import type { ReactNode } from "react";
 
 const navItems = [
   { label: "Início", href: "/home" },
@@ -19,6 +23,56 @@ const navItems = [
   { label: "Catálogo", href: "/catalogo" },
 ];
 
+type HeaderAction = {
+  key: string;
+  label: string;
+  href: string;
+  icon: ReactNode;
+  badge?: ReactNode;
+  showLabel?: boolean;
+  wide?: boolean;
+  tooltip?: boolean;
+};
+
+function HeaderActionItem({
+  action,
+  active,
+}: {
+  action: HeaderAction;
+  active: boolean;
+}) {
+  const target = (
+    <Link
+      href={action.href}
+      aria-label={action.label}
+      aria-current={active ? "page" : undefined}
+      className={`relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle${
+        action.wide === true
+          ? " sm:w-auto sm:gap-2 sm:rounded-button sm:px-3"
+          : ""
+      }`}
+    >
+      {action.icon}
+
+      {action.showLabel === true && (
+        <span className="hidden whitespace-nowrap text-sm font-medium sm:block">
+          {action.label}
+        </span>
+      )}
+
+      {action.badge}
+    </Link>
+  );
+
+  if (action.tooltip === false) {
+    return target;
+  }
+
+  return (
+    <Tooltip content={action.label} side="bottom" target={target} />
+  );
+}
+
 export function SiteHeader({
   favoritesCount,
   activePath,
@@ -27,7 +81,72 @@ export function SiteHeader({
   activePath: string;
 }) {
   const { count, orders } = useBasket();
+  const { count: cartCount } = useCart();
   const { isLoggedIn } = useCustomer();
+
+  const actions: HeaderAction[] = [
+    {
+      key: "favorites",
+      label: "Favoritos",
+      href: "/conta/favoritos",
+      icon: <Heart size={20} weight="regular" />,
+      badge: favoritesCount > 0 && (
+        <span className="absolute right-1 top-1 flex size-2 rounded-full bg-lime ring-2 ring-background" />
+      ),
+    },
+    {
+      key: "basket",
+      label: "Minha cesta",
+      href: "/cesta",
+      icon: <ShoppingBag size={20} weight="regular" />,
+      showLabel: true,
+      wide: true,
+      tooltip: false,
+      badge: count > 0 && (
+        <span
+          aria-live="polite"
+          className="flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal"
+        >
+          {count}
+        </span>
+      ),
+    },
+    {
+      key: "orders",
+      label: "Meus pedidos",
+      href: "/pedidos",
+      icon: <ClipboardText size={20} weight="regular" />,
+      wide: true,
+      badge: orders.length > 0 && (
+        <span
+          aria-live="polite"
+          className="flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal"
+        >
+          {orders.length}
+        </span>
+      ),
+    },
+    {
+      key: "cart",
+      label: "Carrinho",
+      href: "/carrinho",
+      icon: <ShoppingCart size={20} weight="regular" />,
+      badge: cartCount > 0 && (
+        <span
+          aria-live="polite"
+          className="absolute -right-0.5 -top-0.5 flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal ring-2 ring-background"
+        >
+          {cartCount}
+        </span>
+      ),
+    },
+    {
+      key: "account",
+      label: isLoggedIn ? "Minha conta" : "Entrar",
+      href: isLoggedIn ? "/conta" : "/login",
+      icon: <UserCircle size={20} weight="regular" />,
+    },
+  ];
 
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
@@ -74,70 +193,13 @@ export function SiteHeader({
         </div>
 
         <div className="ml-auto flex items-center gap-1.5">
-          <button
-            type="button"
-            aria-label="Favoritos"
-            className="relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle"
-          >
-            <Heart size={20} weight="regular" />
-
-            {favoritesCount > 0 && (
-              <span className="absolute right-1 top-1 flex size-2 rounded-full bg-lime ring-2 ring-background" />
-            )}
-          </button>
-
-          <Link
-            href="/cesta"
-            aria-label="Minha cesta"
-            aria-current={activePath === "/cesta" ? "page" : undefined}
-            className="relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle sm:w-auto sm:gap-2 sm:rounded-button sm:px-3"
-          >
-            <ShoppingBag size={20} weight="regular" />
-
-            <span className="hidden whitespace-nowrap text-sm font-medium sm:block">
-              Minha cesta
-            </span>
-
-            {count > 0 && (
-              <span
-                aria-live="polite"
-                className="flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal"
-              >
-                {count}
-              </span>
-            )}
-          </Link>
-
-          <Link
-            href="/pedidos"
-            aria-label="Meus pedidos"
-            aria-current={activePath === "/pedidos" ? "page" : undefined}
-            className="relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle sm:w-auto sm:gap-2 sm:rounded-button sm:px-3"
-          >
-            <ClipboardText size={20} weight="regular" />
-
-            <span className="hidden whitespace-nowrap text-sm font-medium sm:block">
-              Pedidos
-            </span>
-
-            {orders.length > 0 && (
-              <span
-                aria-live="polite"
-                className="flex size-5 items-center justify-center rounded-full bg-lime text-[10px] font-bold text-gunmetal"
-              >
-                {orders.length}
-              </span>
-            )}
-          </Link>
-
-          <Link
-            href={isLoggedIn ? "/conta" : "/login"}
-            aria-label={isLoggedIn ? "Minha conta" : "Entrar"}
-            aria-current={activePath === "/conta" ? "page" : undefined}
-            className="relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle"
-          >
-            <UserCircle size={20} weight="regular" />
-          </Link>
+          {actions.map((action) => (
+            <HeaderActionItem
+              key={action.key}
+              action={action}
+              active={activePath === action.href}
+            />
+          ))}
         </div>
       </div>
     </header>
