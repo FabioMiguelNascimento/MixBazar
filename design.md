@@ -1,6 +1,6 @@
 # Design — Mix Bazar
 
-Guia de características e padrões de design do Mix Bazar. Este documento descreve a linguagem visual que a Home (`apps/mockup/src/app/home/page.tsx`) já define e que as próximas telas (Catálogo, Detalhes do produto, Montar cesta, Solicitações e painel administrativo) devem reutilizar.
+Guia de características e padrões de design do Mix Bazar. Este documento descreve a linguagem visual que a Home (`apps/mockup/src/app/home/page.tsx`) já define e que as próximas telas (Catálogo, Detalhes do produto, Montar cesta, Pedidos e painel administrativo) devem reutilizar.
 
 Fonte de verdade dos tokens: `packages/ui/src/theme.css`. Se mudar um valor aqui, mude primeiro lá.
 
@@ -9,7 +9,7 @@ Fonte de verdade dos tokens: `packages/ui/src/theme.css`. Se mudar um valor aqui
 ## 1. Identidade
 
 - **Personalidade:** bazar de bairro — próximo, artesanal e prático. Verde vivo com calor humano, não tech retail.
-- **Promessa central:** *Monte sua cesta do seu jeito* — a plataforma organiza pedidos por solicitação, não por checkout. Toda a linguagem reforça "solicitação" e "atendimento", nunca "compra/finalizar".
+- **Promessa central:** *Monte sua cesta do seu jeito* — a plataforma organiza tudo por pedidos, não por checkout. Toda a linguagem reforça "pedido" e "atendimento", nunca "compra/finalizar".
 - **Tom de voz:** direto, caloroso, sem jargão de e-commerce genérico. Frases curtas em pt-BR. Nunca "elevate", "seamless" nem similares.
 
 ## 2. Paleta
@@ -157,10 +157,10 @@ Sempre gradiente `bg-gradient-to-t from-gunmetal/80 via-gunmetal/10 to-transpare
 - Um botão primário Jungle por tela; Lime para destaque/promoção.
 - Imagem protagonista e moldura leve (ou nenhuma) nos cards.
 - Reusar `SectionHeader`, `ProductCard`, `rounded-*` e a escala `2xs…3xl` de `@repo/ui`.
-- Copy de "solicitação/atendimento", não de checkout.
+- Copy de "pedido/atendimento", não de checkout.
 
 **Não faça:**
-- Botão "Comprar agora"/"Finalizar compra" — o fluxo real é adicionar à cesta → enviar solicitação.
+- Botão "Comprar agora"/"Finalizar compra" — o fluxo real é adicionar à cesta → fazer pedido.
 - Cards genéricos shadcn com borda e sombra pesada em cima de foto.
 - Texto branco sem gradiente sobre imagem; texto Lime em fundo claro.
 - Emojis no UI; ícone Phosphor sempre.
