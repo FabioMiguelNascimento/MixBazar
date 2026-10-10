@@ -1,5 +1,10 @@
 "use client";
 
+import { ServiceBar } from "@/components/service-bar";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { formatPrice } from "@/context/basket";
+import { useCart } from "@/context/cart";
 import {
   ArrowRight,
   Basket,
@@ -8,13 +13,8 @@ import {
   ShoppingCart,
   Trash,
 } from "@phosphor-icons/react/dist/ssr";
-import Link from "next/link";
-import { ServiceBar } from "@/components/service-bar";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
-import { formatPrice } from "@/context/basket";
-import { useCart } from "@/context/cart";
 import { Button, buttonStyles } from "@repo/ui";
+import Link from "next/link";
 
 export default function CarrinhoPage() {
   const { lines, count, subtotal, setQty, removeLine } = useCart();
@@ -35,18 +35,18 @@ export default function CarrinhoPage() {
             </h1>
 
             <p className="mt-3 max-w-sm text-sm leading-6 text-pine/70">
-              Monte sua cesta do seu jeito e adicione cestas ao carrinho.
+              Adicione produtos direto do catálogo
             </p>
 
             <Link
-              href="/cesta"
+              href="/catalogo"
               className={buttonStyles({
                 variant: "primary",
                 size: "lg",
                 className: "mt-7",
               })}
             >
-              Montar cesta
+              Ver catálogo
               <ArrowRight size={17} />
             </Link>
           </div>
