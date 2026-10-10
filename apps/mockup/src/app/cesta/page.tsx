@@ -337,16 +337,18 @@ export default function CestaPage() {
                   </p>
 
                   <div className="mt-6 flex flex-wrap items-center gap-3">
-                  <Link
-                    href="#adicionar-produtos"
-                    className={buttonStyles({
-                      variant: "primary",
-                      size: "sm",
-                    })}
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() =>
+                      document
+                        .getElementById("adicionar-produtos")
+                        ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                    }
                   >
                     Ver produtos abaixo
                     <ArrowDown size={17} />
-                  </Link>
+                  </Button>
 
                     <Link
                       href="/catalogo"
