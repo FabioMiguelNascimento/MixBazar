@@ -1,16 +1,19 @@
 "use client";
 
 import {
+  ArrowDown,
   ArrowRight,
   CheckCircle,
   Minus,
   PencilLine,
   Plus,
   ShoppingBag,
+  ShoppingCart,
   Trash,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { SectionHeader } from "@/components/section-header";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -20,9 +23,84 @@ import {
   useBasket,
   type Order,
 } from "@/context/basket";
+import { useCart } from "@/context/cart";
+import { products, type Product } from "@/data/catalog";
+import { Button, buttonStyles } from "@repo/ui";
+
+type PickerRowProps = {
+  product: Product;
+  basketName: string;
+  onAdd: (quantity: number) => void;
+};
+
+function PickerRow({ product, basketName, onAdd }: PickerRowProps) {
+  const [quantity, setQuantity] = useState(1);
+
+  return (
+    <li className="flex items-center gap-4 rounded-card border border-border bg-background p-3">
+      <img
+        src={product.images[0]}
+        alt={product.name}
+        className="size-16 shrink-0 rounded-input object-cover"
+      />
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-heading text-sm font-semibold tracking-tight text-gunmetal">
+          {product.name}
+        </p>
+
+        <p className="mt-0.5 text-sm text-pine/70">{product.price}</p>
+      </div>
+
+      <div
+        role="group"
+        aria-label={`Quantidade de ${product.name}`}
+        className="flex shrink-0 items-center gap-1 rounded-button border border-input p-0.5"
+      >
+        <Button
+          iconOnly
+          tone="muted"
+          iconSize="sm"
+          label="Diminuir quantidade"
+          onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+          disabled={quantity === 1}
+          className="disabled:cursor-not-allowed disabled:opacity-40"
+          icon={<Minus size={14} weight="bold" />}
+        />
+
+        <span className="w-7 text-center text-sm font-semibold text-gunmetal">
+          {quantity}
+        </span>
+
+        <Button
+          iconOnly
+          tone="muted"
+          iconSize="sm"
+          label="Aumentar quantidade"
+          onClick={() => setQuantity((current) => current + 1)}
+          icon={<Plus size={14} weight="bold" />}
+        />
+      </div>
+
+      <Button
+        iconOnly
+        tone="muted"
+        iconSize="md"
+        label={`Adicionar ${product.name} à cesta ${basketName}`}
+        onClick={() => {
+          onAdd(quantity);
+          setQuantity(1);
+        }}
+        className="shrink-0 border border-border hover:border-jungle hover:text-jungle hover:bg-transparent"
+        icon={<Plus size={15} weight="bold" />}
+      />
+    </li>
+  );
+}
 
 export default function CestaPage() {
   const {
+    addItem,
     baskets,
     activeId,
     items,
@@ -36,6 +114,7 @@ export default function CestaPage() {
     deleteBasket,
     sendActiveBasket,
   } = useBasket();
+  const { addBasket } = useCart();
   const [sent, setSent] = useState<Order | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
@@ -132,17 +211,18 @@ export default function CestaPage() {
                   );
                 })}
 
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
+                  size="xs"
+                  icon={<Plus size={15} weight="bold" />}
                   aria-label="Criar nova cesta"
                   title={atMax ? "Limite de 5 cestas atingido" : undefined}
                   disabled={atMax}
                   onClick={createBasket}
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-button border border-border bg-background px-4 py-2 text-sm font-medium text-pine transition hover:border-jungle hover:text-jungle disabled:cursor-not-allowed disabled:opacity-40"
+                  className="shrink-0 text-pine hover:border-jungle hover:text-jungle hover:bg-transparent disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <Plus size={15} weight="bold" />
                   Nova cesta
-                </button>
+                </Button>
               </div>
 
               {atMax && (
@@ -188,18 +268,20 @@ export default function CestaPage() {
               )}
 
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  aria-label={`Renomear cesta ${active.name}`}
+                <Button
+                  iconOnly
+                  tone="ghost"
+                  iconSize="md"
+                  label={`Renomear cesta ${active.name}`}
                   onClick={startRename}
-                  className="flex size-9 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle"
-                >
-                  <PencilLine size={18} />
-                </button>
+                  icon={<PencilLine size={18} />}
+                />
 
-                <button
-                  type="button"
-                  aria-label={`Excluir cesta ${active.name}`}
+                <Button
+                  iconOnly
+                  tone="ghost"
+                  iconSize="md"
+                  label={`Excluir cesta ${active.name}`}
                   title={
                     baskets.length === 1
                       ? "Mantenha ao menos uma cesta"
@@ -207,10 +289,9 @@ export default function CestaPage() {
                   }
                   disabled={baskets.length === 1}
                   onClick={() => deleteBasket(active.id)}
-                  className="flex size-9 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <Trash size={18} />
-                </button>
+                  className="disabled:cursor-not-allowed disabled:opacity-40"
+                  icon={<Trash size={18} />}
+                />
               </div>
             </div>
 
@@ -228,16 +309,30 @@ export default function CestaPage() {
                   </p>
 
                   <p className="mt-2 max-w-md text-sm leading-6 text-pine/70">
-                    Adicione produtos do catálogo ou escolha outra cesta acima.
+                    Adicione produtos logo abaixo ou escolha outra cesta
+                    acima.
                   </p>
 
+                  <div className="mt-6 flex flex-wrap items-center gap-3">
                   <Link
-                    href="/catalogo"
-                    className="mt-6 inline-flex items-center gap-2 rounded-button bg-jungle px-5 py-3 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
+                    href="#adicionar-produtos"
+                    className={buttonStyles({
+                      variant: "primary",
+                      size: "sm",
+                    })}
                   >
-                    Ver catálogo
-                    <ArrowRight size={17} />
+                    Ver produtos abaixo
+                    <ArrowDown size={17} />
                   </Link>
+
+                    <Link
+                      href="/catalogo"
+                      className={buttonStyles({ variant: "outline", size: "sm" })}
+                    >
+                      Ver catálogo
+                      <ArrowRight size={17} />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -284,38 +379,39 @@ export default function CestaPage() {
                             aria-label={`Quantidade de ${item.product.name}`}
                             className="flex w-fit items-center gap-1 rounded-button border border-input bg-background p-1"
                           >
-                            <button
-                              type="button"
-                              aria-label="Diminuir quantidade"
-                              onClick={() =>
-                                setQuantity(
-                                  item.product.id,
-                                  item.quantity - 1,
-                                )
-                              }
-                              disabled={item.quantity === 1}
-                              className="flex size-8 items-center justify-center rounded-full text-gunmetal transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
-                            >
-                              <Minus size={14} weight="bold" />
-                            </button>
+                          <Button
+                            iconOnly
+                            tone="muted"
+                            iconSize="sm"
+                            label="Diminuir quantidade"
+                            onClick={() =>
+                              setQuantity(
+                                item.product.id,
+                                item.quantity - 1,
+                              )
+                            }
+                            disabled={item.quantity === 1}
+                            className="disabled:cursor-not-allowed disabled:opacity-40"
+                            icon={<Minus size={14} weight="bold" />}
+                          />
 
                             <span className="w-7 text-center text-sm font-semibold text-gunmetal">
                               {item.quantity}
                             </span>
 
-                            <button
-                              type="button"
-                              aria-label="Aumentar quantidade"
+                            <Button
+                              iconOnly
+                              tone="muted"
+                              iconSize="sm"
+                              label="Aumentar quantidade"
                               onClick={() =>
                                 setQuantity(
                                   item.product.id,
                                   item.quantity + 1,
                                 )
                               }
-                              className="flex size-8 items-center justify-center rounded-full text-gunmetal transition hover:bg-muted"
-                            >
-                              <Plus size={14} weight="bold" />
-                            </button>
+                              icon={<Plus size={14} weight="bold" />}
+                            />
                           </div>
 
                           <span className="font-heading text-base font-semibold text-gunmetal">
@@ -326,14 +422,15 @@ export default function CestaPage() {
                         </div>
                       </div>
 
-                      <button
-                        type="button"
-                        aria-label={`Remover ${item.product.name} da cesta`}
+                      <Button
+                        iconOnly
+                        tone="ghost"
+                        iconSize="md"
+                        label={`Remover ${item.product.name} da cesta`}
                         onClick={() => removeItem(item.product.id)}
-                        className="flex size-9 shrink-0 items-center justify-center self-start rounded-full text-pine transition hover:bg-muted hover:text-jungle"
-                      >
-                        <Trash size={18} />
-                      </button>
+                        className="shrink-0 self-start"
+                        icon={<Trash size={18} />}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -366,26 +463,66 @@ export default function CestaPage() {
                     de separar os produtos.
                   </p>
 
-                  <button
-                    type="button"
+                  <Button
+                    variant="primary"
+                    size="xl"
+                    icon={<ArrowRight size={17} />}
                     onClick={sendRequest}
-                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-button bg-jungle px-6 py-4 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
+                    className="mt-5 w-full"
                   >
                     Fazer pedido
-                    <ArrowRight size={17} />
-                  </button>
+                  </Button>
 
                   <Link
                     href="/catalogo"
-                    className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-button border border-border bg-background px-6 py-3.5 text-sm font-medium text-gunmetal transition hover:bg-muted"
+                    className={buttonStyles({
+                      variant: "outline",
+                      size: "lg",
+                      className: "mt-3 w-full",
+                    })}
                   >
                     Continuar explorando
                   </Link>
+
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    icon={<ShoppingCart size={17} />}
+                    onClick={() => addBasket(active)}
+                    className="mt-3 w-full"
+                  >
+                    Adicionar cesta ao carrinho
+                  </Button>
                 </aside>
               </div>
             )}
           </>
         )}
+
+        <section
+          id="adicionar-produtos"
+          className="scroll-mt-24 border-t border-border py-20 md:py-24"
+        >
+          <SectionHeader
+            eyebrow="Monte sua cesta"
+            title="Adicionar produtos"
+            description={`Escolha a quantidade e adicione à cesta ${active.name}.`}
+          />
+
+          <ul
+            aria-label={`Produtos para a cesta ${active.name}`}
+            className="mt-10 grid gap-3 sm:grid-cols-2"
+          >
+            {products.map((product) => (
+              <PickerRow
+                key={product.id}
+                product={product}
+                basketName={active.name}
+                onAdd={(quantity) => addItem(product, quantity)}
+              />
+            ))}
+          </ul>
+        </section>
       </div>
 
       <SiteFooter />
@@ -418,23 +555,19 @@ function Confirmation({
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <Link
           href="/catalogo"
-          className="inline-flex items-center gap-2 rounded-button bg-jungle px-6 py-3.5 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
+          className={buttonStyles({ variant: "primary", size: "lg" })}
         >
           Voltar ao catálogo
           <ArrowRight size={17} />
         </Link>
 
-        <button
-          type="button"
-          onClick={onBack}
-          className="inline-flex items-center gap-2 rounded-button border border-border bg-background px-6 py-3.5 text-sm font-medium text-gunmetal transition hover:bg-muted"
-        >
+        <Button variant="outline" size="lg" onClick={onBack}>
           Ver minhas cestas
-        </button>
+        </Button>
 
         <Link
           href="/pedidos"
-          className="inline-flex items-center gap-2 rounded-button border border-border bg-background px-6 py-3.5 text-sm font-medium text-gunmetal transition hover:bg-muted"
+          className={buttonStyles({ variant: "outline", size: "lg" })}
         >
           Ver meus pedidos
         </Link>

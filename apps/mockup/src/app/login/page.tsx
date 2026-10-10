@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { useCustomer } from "@/context/customer";
+import { Button } from "@repo/ui";
 
 function isValidEmail(value: string) {
   return /.+@.+\..+/.test(value.trim());
@@ -148,13 +149,15 @@ export default function LoginPage() {
                 )}
               </div>
 
-              <button
+              <Button
                 type="submit"
-                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-button bg-jungle px-6 py-4 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
+                variant="primary"
+                size="xl"
+                icon={<ArrowRight size={17} />}
+                className="mt-2 w-full"
               >
                 Entrar
-                <ArrowRight size={17} />
-              </button>
+              </Button>
             </form>
 
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-sm">

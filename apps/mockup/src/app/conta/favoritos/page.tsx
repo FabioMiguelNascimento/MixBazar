@@ -12,13 +12,14 @@ import { ProductCard } from "@/components/product-card";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { useBasket } from "@/context/basket";
+import { useCart } from "@/context/cart";
 import { useCustomer } from "@/context/customer";
 import { products } from "@/data/catalog";
+import { buttonStyles } from "@repo/ui";
 
 export default function FavoritosPage() {
   const { favorites, toggleFavorite, isLoggedIn } = useCustomer();
-  const { addItem } = useBasket();
+  const { addProduct } = useCart();
 
   const favoriteProducts = products.filter((product) =>
     favorites.includes(product.id),
@@ -81,7 +82,11 @@ export default function FavoritosPage() {
 
               <Link
                 href="/catalogo"
-                className="mt-6 inline-flex items-center gap-2 rounded-button border border-border bg-background px-5 py-3 text-sm font-medium text-gunmetal transition hover:bg-muted"
+                className={buttonStyles({
+                  variant: "outline",
+                  size: "md",
+                  className: "mt-6",
+                })}
               >
                 Ver catálogo
                 <ArrowRight size={17} />
@@ -95,7 +100,7 @@ export default function FavoritosPage() {
                   product={product}
                   favored
                   onToggleFavorite={() => toggleFavorite(product.id)}
-                  onAdd={() => addItem(product)}
+                  onAdd={() => addProduct(product)}
                 />
               ))}
             </div>

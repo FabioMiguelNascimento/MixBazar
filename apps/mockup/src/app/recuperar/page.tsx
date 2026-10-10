@@ -6,6 +6,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
+import { Button, buttonStyles } from "@repo/ui";
 
 function isValidEmail(value: string) {
   return /.+@.+\..+/.test(value.trim());
@@ -62,7 +63,11 @@ export default function RecuperarPage() {
 
               <Link
                 href="/login"
-                className="mt-7 inline-flex items-center gap-2 rounded-button bg-jungle px-6 py-3.5 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
+                className={buttonStyles({
+                  variant: "primary",
+                  size: "lg",
+                  className: "mt-7",
+                })}
               >
                 Voltar ao login
                 <ArrowRight size={17} />
@@ -109,13 +114,15 @@ export default function RecuperarPage() {
                   )}
                 </div>
 
-                <button
+                <Button
                   type="submit"
-                  className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-button bg-jungle px-6 py-4 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
+                  variant="primary"
+                  size="xl"
+                  icon={<ArrowRight size={17} />}
+                  className="mt-2 w-full"
                 >
                   Enviar link
-                  <ArrowRight size={17} />
-                </button>
+                </Button>
               </form>
 
               <p className="mt-6 text-center text-sm text-pine">

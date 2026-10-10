@@ -1,6 +1,7 @@
 import { Heart, Plus, Tag } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import type { Product } from "@/data/catalog";
+import { Button } from "@repo/ui";
 
 export function ProductCard({
   product,
@@ -33,27 +34,31 @@ export function ProductCard({
           </span>
         )}
 
-        <button
-          type="button"
-          aria-label={`Favoritar ${product.name}`}
+        <Button
+          iconOnly
+          tone="solid"
+          iconSize="md"
+          label={`Favoritar ${product.name}`}
           onClick={onToggleFavorite}
-          className="absolute right-4 top-4 flex size-9 items-center justify-center rounded-full bg-platinum/90 text-pine opacity-0 shadow-sm backdrop-blur transition group-hover:opacity-100 hover:text-jungle focus-visible:opacity-100"
-        >
-          <Heart
-            size={18}
-            weight={favored ? "fill" : "regular"}
-            className={favored ? "text-jungle" : undefined}
-          />
-        </button>
+          className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+          icon={
+            <Heart
+              size={18}
+              weight={favored ? "fill" : "regular"}
+              className={favored ? "text-jungle" : undefined}
+            />
+          }
+        />
 
-        <button
-          type="button"
-          aria-label={`Adicionar ${product.name} à cesta`}
+        <Button
+          iconOnly
+          tone="primary"
+          iconSize="lg"
+          label={`Adicionar ${product.name} ao carrinho`}
           onClick={onAdd}
-          className="absolute bottom-4 right-4 flex size-10 items-center justify-center rounded-full bg-jungle text-platinum opacity-0 shadow-lg transition group-hover:opacity-100 hover:bg-primary-hover focus-visible:opacity-100"
-        >
-          <Plus size={19} weight="bold" />
-        </button>
+          className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
+          icon={<Plus size={19} weight="bold" />}
+        />
       </div>
 
       <Link href={href} className="block pt-5">

@@ -11,6 +11,7 @@ import {
   useCustomer,
   type CustomerProfile,
 } from "@/context/customer";
+import { Button } from "@repo/ui";
 
 const PROFILE_FIELDS = [
   { key: "name", label: "Nome", inputType: "text" },
@@ -81,14 +82,15 @@ export default function DadosPage() {
             </div>
 
             {!editing && (
-              <button
-                type="button"
+              <Button
+                variant="outline"
+                size="xs"
+                icon={<PencilLine size={16} />}
                 onClick={startEdit}
-                className="inline-flex items-center gap-2 rounded-button border border-border bg-background px-4 py-2 text-sm font-medium text-gunmetal transition hover:border-jungle hover:text-jungle"
+                className="hover:border-jungle hover:text-jungle hover:bg-transparent"
               >
-                <PencilLine size={16} />
                 Editar
-              </button>
+              </Button>
             )}
           </div>
 
@@ -120,21 +122,21 @@ export default function DadosPage() {
               ))}
 
               <div className="flex flex-wrap gap-3 sm:col-span-2">
-                <button
-                  type="button"
+                <Button
+                  variant="primary"
+                  size="md"
                   onClick={saveEdit}
-                  className="inline-flex items-center gap-2 rounded-button bg-jungle px-5 py-3 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
                 >
                   Salvar dados
-                </button>
+                </Button>
 
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
+                  size="md"
                   onClick={() => setEditing(false)}
-                  className="rounded-button border border-border bg-background px-5 py-3 text-sm font-medium text-gunmetal transition hover:bg-muted"
                 >
                   Cancelar
-                </button>
+                </Button>
               </div>
             </div>
           ) : (

@@ -1,24 +1,26 @@
 "use client";
 
-import {
-  Basket,
-  CaretRight,
-  Heart,
-  Minus,
-  Package,
-  Plus,
-} from "@phosphor-icons/react/dist/ssr";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
-import { useState } from "react";
 import { ProductCard } from "@/components/product-card";
 import { SectionHeader } from "@/components/section-header";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { useBasket } from "@/context/basket";
+import { useCart } from "@/context/cart";
 import { useCustomer } from "@/context/customer";
 import { products, recommendedIds } from "@/data/catalog";
+import {
+  CaretRight,
+  Heart,
+  Minus,
+  Package,
+  Plus,
+  ShoppingCart,
+} from "@phosphor-icons/react/dist/ssr";
+import { Button, buttonStyles } from "@repo/ui";
+import Link from "next/link";
+import { useParams, usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function ProdutoPage() {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +29,7 @@ export default function ProdutoPage() {
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [renderedId, setRenderedId] = useState(id);
+  const { addProduct } = useCart();
   const { addItem } = useBasket();
   const { favorites, toggleFavorite } = useCustomer();
 
@@ -68,7 +71,11 @@ export default function ProdutoPage() {
 
             <Link
               href="/catalogo"
-              className="mt-7 rounded-button border border-border bg-background px-5 py-3 text-sm font-medium text-gunmetal transition hover:bg-muted"
+              className={buttonStyles({
+                variant: "outline",
+                size: "md",
+                className: "mt-7",
+              })}
             >
               Ver catálogo
             </Link>
@@ -167,63 +174,81 @@ export default function ProdutoPage() {
                       aria-labelledby="quantidade-label"
                       className="flex w-fit items-center gap-1 rounded-button border border-input bg-background p-1"
                     >
-                      <button
-                        type="button"
-                        aria-label="Diminuir quantidade"
+                      <Button
+                        iconOnly
+                        tone="muted"
+                        iconSize="md"
+                        label="Diminuir quantidade"
                         onClick={() =>
                           setQuantity((current) => Math.max(1, current - 1))
                         }
                         disabled={quantity === 1}
-                        className="flex size-9 items-center justify-center rounded-full text-gunmetal transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
-                      >
-                        <Minus size={15} weight="bold" />
-                      </button>
+                        className="disabled:cursor-not-allowed disabled:opacity-40"
+                        icon={<Minus size={15} weight="bold" />}
+                      />
 
                       <span className="w-8 text-center text-sm font-semibold text-gunmetal">
                         {quantity}
                       </span>
 
-                      <button
-                        type="button"
-                        aria-label="Aumentar quantidade"
+                      <Button
+                        iconOnly
+                        tone="muted"
+                        iconSize="md"
+                        label="Aumentar quantidade"
                         onClick={() => setQuantity((current) => current + 1)}
-                        className="flex size-9 items-center justify-center rounded-full text-gunmetal transition hover:bg-muted"
-                      >
-                        <Plus size={15} weight="bold" />
-                      </button>
+                        icon={<Plus size={15} weight="bold" />}
+                      />
                     </div>
 
-                    <button
-                      type="button"
+                    <Button
+                      iconOnly
+                      tone="muted"
+                      iconSize="md"
+                      label={
+                        favorites.includes(product.id)
+                          ? `Remover ${product.name} dos favoritos`
+                          : `Favoritar ${product.name}`
+                      }
                       onClick={() => toggleFavorite(product.id)}
-                      className="inline-flex items-center gap-2 rounded-button border border-border px-4 py-2.5 text-sm font-medium text-gunmetal transition hover:border-jungle hover:text-jungle"
-                    >
-                      <Heart
-                        size={17}
-                        weight={
-                          favorites.includes(product.id) ? "fill" : "regular"
-                        }
-                        className={
-                          favorites.includes(product.id)
-                            ? "text-jungle"
-                            : undefined
-                        }
-                      />
-                      {favorites.includes(product.id)
-                        ? "Favoritado"
-                        : "Favoritar"}
-                    </button>
+                      className="size-[46px] border border-border hover:border-jungle hover:text-jungle hover:bg-transparent"
+                      icon={
+                        <Heart
+                          size={19}
+                          weight={
+                            favorites.includes(product.id) ? "fill" : "regular"
+                          }
+                          className={
+                            favorites.includes(product.id)
+                              ? "text-jungle"
+                              : undefined
+                          }
+                        />
+                      }
+                    />
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => addItem(product, quantity)}
-                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-button bg-jungle px-6 py-4 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active sm:w-auto"
-                >
-                  <Basket size={18} weight="bold" />
-                  Adicionar à cesta
-                </button>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <Button
+                    variant="primary"
+                    size="xl"
+                    icon={<ShoppingCart size={18} weight="bold" />}
+                    onClick={() => addProduct(product, quantity)}
+                    className="w-full sm:w-auto"
+                  >
+                    Adicionar ao carrinho
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="xl"
+                    onClick={() => addItem(product, quantity)}
+                    className="w-full sm:w-auto"
+                  >
+                    Adicionar à cesta
+                  </Button>
+                </div>
               </div>
             </section>
 
@@ -243,7 +268,7 @@ export default function ProdutoPage() {
                     product={item}
                     favored={favorites.includes(item.id)}
                     onToggleFavorite={() => toggleFavorite(item.id)}
-                    onAdd={() => addItem(item)}
+                    onAdd={() => addProduct(item)}
                   />
                 ))}
               </div>

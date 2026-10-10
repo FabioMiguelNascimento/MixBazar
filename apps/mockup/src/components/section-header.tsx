@@ -1,5 +1,6 @@
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { Button, buttonStyles } from "@repo/ui";
 
 export function SectionHeader({
   eyebrow,
@@ -36,19 +37,16 @@ export function SectionHeader({
         (actionHref ? (
           <Link
             href={actionHref}
-            className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-jungle transition hover:text-pine"
+            className={buttonStyles({ variant: "text", className: "shrink-0" })}
           >
             {action}
             <ArrowRight size={15} />
           </Link>
         ) : (
-          <button
-            type="button"
-            className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-jungle transition hover:text-pine"
-          >
+          <Button variant="text" className="shrink-0">
             {action}
             <ArrowRight size={15} />
-          </button>
+          </Button>
         ))}
     </div>
   );

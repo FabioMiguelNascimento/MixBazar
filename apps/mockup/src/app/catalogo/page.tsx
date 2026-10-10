@@ -11,9 +11,10 @@ import { ProductCard } from "@/components/product-card";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { useBasket } from "@/context/basket";
+import { useCart } from "@/context/cart";
 import { useCustomer } from "@/context/customer";
 import { categories, products, type Product } from "@/data/catalog";
+import { Button, buttonStyles } from "@repo/ui";
 
 type SortKey = "destaques" | "menor" | "maior" | "az";
 
@@ -36,7 +37,7 @@ export default function CatalogoPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [sort, setSort] = useState<SortKey>("destaques");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const { addItem } = useBasket();
+  const { addProduct } = useCart();
   const { favorites, toggleFavorite } = useCustomer();
 
   function selectCategory(category: string | null) {
@@ -150,23 +151,23 @@ export default function CatalogoPage() {
                   product={product}
                   favored={favorites.includes(product.id)}
                   onToggleFavorite={() => toggleFavorite(product.id)}
-                  onAdd={() => addItem(product)}
+                  onAdd={() => addProduct(product)}
                 />
               ))}
             </div>
 
             {hasMore && (
               <div className="mt-12 flex justify-center">
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
+                  size="md"
+                  icon={<CaretDown size={16} weight="bold" />}
                   onClick={() =>
                     setVisibleCount((count) => count + PAGE_SIZE)
                   }
-                  className="inline-flex items-center gap-2 rounded-button border border-border bg-background px-5 py-3 text-sm font-medium text-gunmetal transition hover:bg-muted"
                 >
                   Carregar mais
-                  <CaretDown size={16} weight="bold" />
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -183,13 +184,14 @@ export default function CatalogoPage() {
               outras opções do Mix Bazar.
             </p>
 
-            <button
-              type="button"
+            <Button
+              variant="outline"
+              size="md"
               onClick={() => selectCategory(null)}
-              className="mt-6 rounded-button border border-border bg-background px-5 py-3 text-sm font-medium text-gunmetal transition hover:bg-muted"
+              className="mt-6"
             >
               Limpar filtros
-            </button>
+            </Button>
           </div>
         )}
 
@@ -212,7 +214,11 @@ export default function CatalogoPage() {
 
             <Link
               href="/cesta"
-              className="inline-flex w-fit items-center gap-2 rounded-button bg-jungle px-5 py-3 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
+              className={buttonStyles({
+                variant: "primary",
+                size: "md",
+                className: "w-fit",
+              })}
             >
               Montar minha cesta
               <ArrowRight size={17} />

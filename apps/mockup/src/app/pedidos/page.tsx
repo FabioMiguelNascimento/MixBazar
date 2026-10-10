@@ -10,6 +10,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { OrderCard } from "@/components/order-card";
 import { useBasket } from "@/context/basket";
+import { buttonStyles } from "@repo/ui";
 
 export default function PedidosPage() {
   const { orders } = useBasket();
@@ -36,7 +37,11 @@ export default function PedidosPage() {
 
             <Link
               href="/cesta"
-              className="mt-7 inline-flex items-center gap-2 rounded-button bg-jungle px-6 py-3.5 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
+              className={buttonStyles({
+                variant: "primary",
+                size: "lg",
+                className: "mt-7",
+              })}
             >
               Montar minha cesta
               <ArrowRight size={17} />

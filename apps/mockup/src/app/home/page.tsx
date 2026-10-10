@@ -8,9 +8,10 @@ import { SectionHeader } from "@/components/section-header";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { useBasket } from "@/context/basket";
+import { useCart } from "@/context/cart";
 import { useCustomer } from "@/context/customer";
 import { categories, products, type Product } from "@/data/catalog";
+import { buttonStyles } from "@repo/ui";
 
 /* ------------------------------------------------------------------ */
 /* Dados                                                               */
@@ -64,7 +65,7 @@ const heroCampaigns: HeroCampaign[] = [
 
 export default function MockupHome() {
   const [heroIndex, setHeroIndex] = useState(0);
-  const { addItem } = useBasket();
+  const { addProduct } = useCart();
   const { favorites, toggleFavorite } = useCustomer();
 
   const hero = heroCampaigns[heroIndex];
@@ -88,7 +89,7 @@ export default function MockupHome() {
           products={products.slice(0, 4)}
           favorites={favorites}
           onToggleFavorite={toggleFavorite}
-          onAddItem={addItem}
+          onAddItem={addProduct}
         />
 
         <CustomBasket />
@@ -152,7 +153,7 @@ function Hero({
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href={campaign.primaryHref}
-              className="inline-flex items-center gap-2 rounded-button bg-lime px-6 py-3.5 text-sm font-semibold text-gunmetal transition hover:bg-secondary-hover active:bg-secondary-active"
+              className={buttonStyles({ variant: "accent", size: "lg" })}
             >
               {campaign.primaryCta}
               <ArrowRight size={17} />
@@ -160,7 +161,7 @@ function Hero({
 
             <Link
               href={campaign.secondaryHref}
-              className="rounded-button border border-white/30 px-6 py-3.5 text-sm font-medium text-white transition hover:bg-white/10"
+              className={buttonStyles({ variant: "outlineDark", size: "lg" })}
             >
               {campaign.secondaryCta}
             </Link>
@@ -320,7 +321,11 @@ function CustomBasket() {
 
           <Link
             href="/cesta"
-            className="mt-8 inline-flex w-fit items-center gap-2 rounded-button bg-lime px-5 py-3 text-sm font-semibold text-gunmetal transition hover:bg-secondary-hover active:bg-secondary-active"
+            className={buttonStyles({
+              variant: "accent",
+              size: "md",
+              className: "mt-8 w-fit",
+            })}
           >
             Montar minha cesta
             <ArrowRight size={17} />
@@ -356,7 +361,11 @@ function CampaignBanner() {
 
         <Link
           href="/catalogo"
-          className="inline-flex w-fit items-center gap-2 rounded-button bg-jungle px-5 py-3 text-sm font-medium text-platinum transition hover:bg-primary-hover active:bg-primary-active"
+          className={buttonStyles({
+            variant: "primary",
+            size: "md",
+            className: "w-fit",
+          })}
         >
           Explorar novidades
           <ArrowRight size={17} />

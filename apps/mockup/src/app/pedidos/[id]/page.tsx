@@ -11,6 +11,7 @@ import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { formatDateTime, formatPrice, useBasket } from "@/context/basket";
+import { buttonStyles } from "@repo/ui";
 
 export default function PedidoPage() {
   const { id } = useParams<{ id: string }>();
@@ -38,7 +39,11 @@ export default function PedidoPage() {
 
             <Link
               href="/pedidos"
-              className="mt-7 rounded-button border border-border bg-background px-5 py-3 text-sm font-medium text-gunmetal transition hover:bg-muted"
+              className={buttonStyles({
+                variant: "outline",
+                size: "md",
+                className: "mt-7",
+              })}
             >
               Ver meus pedidos
             </Link>
@@ -153,7 +158,11 @@ export default function PedidoPage() {
 
                 <Link
                   href="/pedidos"
-                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-button border border-border bg-background px-6 py-3.5 text-sm font-medium text-gunmetal transition hover:bg-muted"
+                  className={buttonStyles({
+                    variant: "outline",
+                    size: "lg",
+                    className: "mt-5 w-full",
+                  })}
                 >
                   Voltar para pedidos
                 </Link>
