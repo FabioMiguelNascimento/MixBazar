@@ -14,7 +14,10 @@
     "./theme.css": "./src/theme.css",
     "./globals.css": "./src/globals.css"
   },
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "prettier --check ./src",
@@ -22,7 +25,7 @@
   },
   "dependencies": {
     "cn": "^0.4.0",
-    "react": "19.2.8"
+    "react": "19.3.0"
   },
   "devDependencies": {
     "@types/react": "^19",

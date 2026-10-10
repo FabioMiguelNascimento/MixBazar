@@ -1,1 +1,39 @@
 @import "@repo/ui/globals.css";
+
+::view-transition-old(.mix-page) {
+  animation: 180ms ease-in both mix-page-out;
+}
+
+::view-transition-new(.mix-page) {
+  animation: 240ms ease-out both mix-page-in;
+}
+
+@keyframes mix-page-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes mix-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
