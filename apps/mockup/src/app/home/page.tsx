@@ -9,6 +9,7 @@ import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { useBasket } from "@/context/basket";
+import { useCustomer } from "@/context/customer";
 import { categories, products, type Product } from "@/data/catalog";
 
 /* ------------------------------------------------------------------ */
@@ -63,18 +64,10 @@ const heroCampaigns: HeroCampaign[] = [
 
 export default function MockupHome() {
   const [heroIndex, setHeroIndex] = useState(0);
-  const [favorites, setFavorites] = useState<string[]>([]);
   const { addItem } = useBasket();
+  const { favorites, toggleFavorite } = useCustomer();
 
   const hero = heroCampaigns[heroIndex];
-
-  function toggleFavorite(id: string) {
-    setFavorites((current) =>
-      current.includes(id)
-        ? current.filter((favorite) => favorite !== id)
-        : [...current, id],
-    );
-  }
 
   return (
     <main className="min-h-svh bg-background text-foreground">

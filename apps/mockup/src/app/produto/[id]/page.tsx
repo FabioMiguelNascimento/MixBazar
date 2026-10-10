@@ -17,17 +17,18 @@ import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { useBasket } from "@/context/basket";
+import { useCustomer } from "@/context/customer";
 import { products, recommendedIds } from "@/data/catalog";
 
 export default function ProdutoPage() {
   const { id } = useParams<{ id: string }>();
   const pathname = usePathname();
 
-  const [favorites, setFavorites] = useState<string[]>([]);
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [renderedId, setRenderedId] = useState(id);
   const { addItem } = useBasket();
+  const { favorites, toggleFavorite } = useCustomer();
 
   const product = products.find((item) => item.id === id);
 
@@ -36,14 +37,6 @@ export default function ProdutoPage() {
     setRenderedId(id);
     setActiveImage(0);
     setQuantity(1);
-  }
-
-  function toggleFavorite(productId: string) {
-    setFavorites((current) =>
-      current.includes(productId)
-        ? current.filter((favorite) => favorite !== productId)
-        : [...current, productId],
-    );
   }
 
   const recommended = recommendedIds

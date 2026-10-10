@@ -12,6 +12,7 @@ import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { useBasket } from "@/context/basket";
+import { useCustomer } from "@/context/customer";
 import { categories, products, type Product } from "@/data/catalog";
 
 type SortKey = "destaques" | "menor" | "maior" | "az";
@@ -34,17 +35,9 @@ function sortProducts(list: Product[], sort: SortKey): Product[] {
 export default function CatalogoPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [sort, setSort] = useState<SortKey>("destaques");
-  const [favorites, setFavorites] = useState<string[]>([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const { addItem } = useBasket();
-
-  function toggleFavorite(id: string) {
-    setFavorites((current) =>
-      current.includes(id)
-        ? current.filter((favorite) => favorite !== id)
-        : [...current, id],
-    );
-  }
+  const { favorites, toggleFavorite } = useCustomer();
 
   function selectCategory(category: string | null) {
     setActiveCategory(category);
