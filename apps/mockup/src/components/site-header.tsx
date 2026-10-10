@@ -5,6 +5,7 @@ import {
   Heart,
   MagnifyingGlass,
   ShoppingBag,
+  UserCircle,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useBasket } from "@/context/basket";
@@ -125,6 +126,15 @@ export function SiteHeader({
                 {orders.length}
               </span>
             )}
+          </Link>
+
+          <Link
+            href="/conta"
+            aria-label="Minha conta"
+            aria-current={activePath === "/conta" ? "page" : undefined}
+            className="relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle"
+          >
+            <UserCircle size={20} weight="regular" />
           </Link>
         </div>
       </div>
