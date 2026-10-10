@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Montserrat } from "next/font/google";
 import { BasketProvider } from "@/context/basket";
+import { CustomerProvider } from "@/context/customer";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -16,7 +17,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Mockup — TCC",
   description: "App de mockup de telas, sem auth nem backend.",
-  icons: { icon: "/mockup/LogoMix.svg" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -26,7 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${montserrat.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <BasketProvider>{children}</BasketProvider>
+        <CustomerProvider>
+          <BasketProvider>{children}</BasketProvider>
+        </CustomerProvider>
       </body>
     </html>
   );
