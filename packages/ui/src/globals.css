@@ -1,4 +1,9 @@
 @import "tailwindcss";
+/* O dev server de cada app roda com cwd próprio, então a detecção
+   automática do Tailwind v4 nunca enxerga este pacote: sem isto, as
+   classes usadas só aqui (ex.: py-3.5, size-9, hover:bg-primary-hover
+   do Button) jamais viram CSS. Caminho relativo a este arquivo. */
+@source ".";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "./theme.css";

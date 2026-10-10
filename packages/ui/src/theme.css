@@ -169,7 +169,7 @@
 
   --secondary: var(--lime);
   --secondary-foreground: var(--gunmetal);
-  --muted: var(--platinum);
+  --muted: color-mix(in oklch, var(--gunmetal) 8%, var(--platinum));
   --muted-foreground: var(--pine);
 
   --accent: var(--lime);
