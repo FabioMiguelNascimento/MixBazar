@@ -15,7 +15,7 @@ import type { Product } from "@/data/catalog";
 /* Cestas do mockup — vários rascunhos nomeados por comprador, com uma */
 /* cesta ativa. Home, Catálogo e Detalhe somem sempre na ativa, por    */
 /* isso a API de leitura (items/count/subtotal/addItem) não mudou.     */
-/* Envios viram solicitações registradas no histórico.                 */
+/* Envios viram pedidos registrados no histórico.                      */
 /* ------------------------------------------------------------------ */
 
 export type BasketItem = {
@@ -29,7 +29,7 @@ export type Basket = {
   items: BasketItem[];
 };
 
-export type Solicitation = {
+export type Order = {
   id: string;
   number: number;
   name: string;
@@ -45,7 +45,7 @@ type BasketContextValue = {
   items: BasketItem[];
   count: number;
   subtotal: number;
-  requests: Solicitation[];
+  orders: Order[];
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
@@ -53,7 +53,7 @@ type BasketContextValue = {
   switchBasket: (id: string) => void;
   renameBasket: (id: string, name: string) => void;
   deleteBasket: (id: string) => void;
-  sendActiveBasket: () => Solicitation;
+  sendActiveBasket: () => Order;
 };
 
 const FIRST_BASKET_ID = "cesta-1";
@@ -82,7 +82,7 @@ export function BasketProvider({ children }: { children: ReactNode }) {
     freshBasket(FIRST_BASKET_ID, FIRST_BASKET_NAME),
   ]);
   const [activeId, setActiveId] = useState(FIRST_BASKET_ID);
-  const [requests, setRequests] = useState<Solicitation[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const counter = useRef(2);
   const requestCounter = useRef(1);
 
@@ -196,8 +196,8 @@ export function BasketProvider({ children }: { children: ReactNode }) {
     const number = requestCounter.current;
     requestCounter.current += 1;
 
-    const sent: Solicitation = {
-      id: `solicitacao-${number}`,
+    const sent: Order = {
+      id: `pedido-${number}`,
       number,
       name: target?.name ?? FIRST_BASKET_NAME,
       items: targetItems,
@@ -208,7 +208,7 @@ export function BasketProvider({ children }: { children: ReactNode }) {
       ),
       sentAt: new Date().toISOString(),
     };
-    setRequests((current) => [sent, ...current]);
+    setOrders((current) => [sent, ...current]);
 
     const remaining = baskets.filter((basket) => basket.id !== target?.id);
 
@@ -252,7 +252,7 @@ export function BasketProvider({ children }: { children: ReactNode }) {
       items,
       count,
       subtotal,
-      requests,
+      orders,
       addItem,
       removeItem,
       setQuantity,
@@ -268,7 +268,7 @@ export function BasketProvider({ children }: { children: ReactNode }) {
       items,
       count,
       subtotal,
-      requests,
+      orders,
       addItem,
       removeItem,
       setQuantity,
