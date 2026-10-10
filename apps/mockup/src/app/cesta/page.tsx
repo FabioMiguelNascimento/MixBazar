@@ -539,10 +539,11 @@ export default function CestaPage() {
           </>
         )}
 
-        <section
-          id="adicionar-produtos"
-          className="scroll-mt-24 border-t border-border py-20 md:py-24"
-        >
+        {sent === null && (
+          <section
+            id="adicionar-produtos"
+            className="scroll-mt-24 border-t border-border py-20 md:py-24"
+          >
           <SectionHeader
             eyebrow="Monte sua cesta"
             title="Adicionar produtos"
@@ -563,6 +564,7 @@ export default function CestaPage() {
             ))}
           </ul>
         </section>
+        )}
       </div>
 
       <SiteFooter />
