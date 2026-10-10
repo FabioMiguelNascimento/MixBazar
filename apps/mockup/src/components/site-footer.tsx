@@ -25,7 +25,7 @@ export function SiteFooter() {
 
             <p className="mt-4 max-w-sm text-sm leading-6 text-pine/65">
               Cestas, flores, presentes e produtos para diferentes momentos.
-              Encontre o que procura e envie sua solicitação.
+              Encontre o que procura e faça seu pedido.
             </p>
           </div>
 
@@ -56,7 +56,7 @@ export function SiteFooter() {
             <ul className="mt-4 grid gap-2 text-sm text-pine/70">
               <li>Segunda a sábado</li>
               <li>Consulte os horários do estabelecimento</li>
-              <li>Solicitações pelo site e atendimento externo</li>
+              <li>Pedidos pelo site e atendimento externo</li>
             </ul>
           </div>
         </div>

@@ -254,7 +254,7 @@ export const products: Product[] = [
     price: "R$ 69,90",
     priceValue: 69.9,
     description:
-      "Um box presenteável com itens à sua escolha, embalado com capricho para a ocasião. Envie sua solicitação e o Mix Bazar monta do seu jeito.",
+      "Um box presenteável com itens à sua escolha, embalado com capricho para a ocasião. Faça seu pedido e o Mix Bazar monta do seu jeito.",
     images: [
       img("1607083206968-13611e3d76db"),
       img("1639562954924-975ca13f454a"),

@@ -29,7 +29,7 @@ const heroCampaigns: HeroCampaign[] = [
   {
     title: "Uma cesta do seu jeito, para cada momento.",
     description:
-      "Escolha os produtos, monte sua cesta e envie sua solicitação.",
+      "Escolha os produtos, monte sua cesta e faça seu pedido.",
     primaryCta: "Montar minha cesta",
     primaryHref: "/cesta",
     secondaryCta: "Ver catálogo",
@@ -306,14 +306,14 @@ function CustomBasket() {
 
           <p className="mt-5 max-w-lg text-sm leading-6 text-platinum/70 md:text-base">
             Escolha os produtos que deseja incluir, organize sua composição e
-            envie a solicitação ao Mix Bazar.
+            envie o pedido ao Mix Bazar.
           </p>
 
           <ol className="mt-7 grid gap-4">
             {[
               "Escolha os produtos que deseja incluir.",
               "Ajuste a composição da sua cesta.",
-              "Envie a solicitação para o estabelecimento.",
+              "Envie o pedido para o estabelecimento.",
             ].map((step, index) => (
               <li key={step} className="flex items-center gap-3">
                 <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-lime text-xs font-bold text-gunmetal">

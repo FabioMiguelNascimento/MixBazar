@@ -76,7 +76,7 @@ export default function CatalogoPage() {
 
           <p className="mt-3 max-w-2xl text-sm leading-6 text-pine/70 md:text-base">
             Todos os produtos disponíveis no Mix Bazar. Filtre por categoria,
-            monte sua cesta e envie sua solicitação.
+            monte sua cesta e faça seu pedido.
           </p>
         </section>
 
@@ -212,8 +212,8 @@ export default function CatalogoPage() {
               </h2>
 
               <p className="mt-3 max-w-2xl text-sm leading-6 text-pine/75">
-                Escolha os produtos que combinam com o momento e envie sua
-                solicitação — o Mix Bazar cuida do resto.
+                Escolha os produtos que combinam com o momento e faça seu
+                pedido — o Mix Bazar cuida do resto.
               </p>
             </div>
 
