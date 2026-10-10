@@ -3,6 +3,7 @@
 import {
   ArrowDown,
   ArrowRight,
+  Check,
   CheckCircle,
   Minus,
   PencilLine,
@@ -25,6 +26,8 @@ import {
 } from "@/context/basket";
 import { useCart } from "@/context/cart";
 import { products, type Product } from "@/data/catalog";
+import { SwapIcon } from "@/components/swap-icon";
+import { useJustAdded } from "@/hooks/use-just-added";
 import { Button, buttonStyles } from "@repo/ui";
 
 type PickerRowProps = {
@@ -35,6 +38,7 @@ type PickerRowProps = {
 
 function PickerRow({ product, basketName, onAdd }: PickerRowProps) {
   const [quantity, setQuantity] = useState(1);
+  const [justAdded, triggerAdded] = useJustAdded();
 
   return (
     <li className="flex items-center gap-4 rounded-card border border-border bg-background p-3">
@@ -86,14 +90,32 @@ function PickerRow({ product, basketName, onAdd }: PickerRowProps) {
         iconOnly
         tone="muted"
         iconSize="md"
-        label={`Adicionar ${product.name} à cesta ${basketName}`}
+        label={
+          justAdded
+            ? `${product.name} adicionado à cesta ${basketName}`
+            : `Adicionar ${product.name} à cesta ${basketName}`
+        }
         onClick={() => {
           onAdd(quantity);
           setQuantity(1);
+          triggerAdded();
         }}
-        className="shrink-0 border border-border hover:border-jungle hover:text-jungle hover:bg-transparent"
-        icon={<Plus size={15} weight="bold" />}
-      />
+        className="relative shrink-0 border border-border hover:border-jungle hover:text-jungle hover:bg-transparent"
+        icon={
+          <SwapIcon
+            active={justAdded}
+            icon={<Plus size={15} weight="bold" />}
+            activeIcon={<Check size={15} weight="bold" />}
+          />
+        }
+      >
+        {justAdded && (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 animate-pulse-once rounded-full bg-jungle/25"
+          />
+        )}
+      </Button>
     </li>
   );
 }
@@ -116,6 +138,7 @@ export default function CestaPage() {
   } = useBasket();
   const { addBasket } = useCart();
   const [sent, setSent] = useState<Order | null>(null);
+  const [justAddedBasket, triggerBasketAdded] = useJustAdded();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
   const cancelRename = useRef(false);
@@ -142,12 +165,12 @@ export default function CestaPage() {
   }
 
   return (
-    <main className="min-h-svh bg-background text-foreground">
+    <main className="flex min-h-svh flex-col bg-background text-foreground">
       <ServiceBar />
 
       <SiteHeader favoritesCount={0} activePath="/cesta" />
 
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-6">
         {sent !== null ? (
           <Confirmation
             number={sent.number}
@@ -466,11 +489,36 @@ export default function CestaPage() {
                   <Button
                     variant="primary"
                     size="xl"
-                    icon={<ArrowRight size={17} />}
                     onClick={sendRequest}
                     className="mt-5 w-full"
                   >
                     Fazer pedido
+                    <ArrowRight size={17} />
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    icon={
+                      <SwapIcon
+                        active={justAddedBasket}
+                        icon={<ShoppingCart size={17} />}
+                        activeIcon={<Check size={17} weight="bold" />}
+                      />
+                    }
+                    onClick={() => {
+                      addBasket(active);
+                      triggerBasketAdded();
+                    }}
+                    className="relative mt-3 w-full"
+                  >
+                    Adicionar cesta ao carrinho
+                    {justAddedBasket && (
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-0 animate-pulse-once rounded-button bg-jungle/25"
+                      />
+                    )}
                   </Button>
 
                   <Link
@@ -483,16 +531,6 @@ export default function CestaPage() {
                   >
                     Continuar explorando
                   </Link>
-
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    icon={<ShoppingCart size={17} />}
-                    onClick={() => addBasket(active)}
-                    className="mt-3 w-full"
-                  >
-                    Adicionar cesta ao carrinho
-                  </Button>
                 </aside>
               </div>
             )}

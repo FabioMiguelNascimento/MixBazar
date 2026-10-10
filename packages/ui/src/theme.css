@@ -37,6 +37,19 @@
   --min-width-xl: 36rem;
   --min-width-2xl: 42rem;
   --min-width-3xl: 48rem;
+
+  --animate-pulse-once: pulse-once 0.7s cubic-bezier(0, 0, 0.2, 1) forwards;
+
+  @keyframes pulse-once {
+    from {
+      transform: scale(1);
+      opacity: 0.45;
+    }
+    to {
+      transform: scale(1.35);
+      opacity: 0;
+    }
+  }
 }
 
 @theme inline {

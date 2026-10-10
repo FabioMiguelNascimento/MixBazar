@@ -1,6 +1,8 @@
-import { Heart, Plus, Tag } from "@phosphor-icons/react/dist/ssr";
+import { Check, Heart, Plus, Tag } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import type { Product } from "@/data/catalog";
+import { SwapIcon } from "@/components/swap-icon";
+import { useJustAdded } from "@/hooks/use-just-added";
 import { Button } from "@repo/ui";
 
 export function ProductCard({
@@ -14,6 +16,7 @@ export function ProductCard({
   onToggleFavorite: () => void;
   onAdd: () => void;
 }) {
+  const [justAdded, triggerAdded] = useJustAdded();
   const href = `/produto/${product.id}`;
 
   return (
@@ -54,11 +57,31 @@ export function ProductCard({
           iconOnly
           tone="primary"
           iconSize="lg"
-          label={`Adicionar ${product.name} ao carrinho`}
-          onClick={onAdd}
+          label={
+            justAdded
+              ? `${product.name} adicionado ao carrinho`
+              : `Adicionar ${product.name} ao carrinho`
+          }
+          onClick={() => {
+            onAdd();
+            triggerAdded();
+          }}
           className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
-          icon={<Plus size={19} weight="bold" />}
-        />
+          icon={
+            <SwapIcon
+              active={justAdded}
+              icon={<Plus size={19} weight="bold" />}
+              activeIcon={<Check size={19} weight="bold" />}
+            />
+          }
+        >
+          {justAdded && (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 animate-pulse-once rounded-full bg-platinum/40"
+            />
+          )}
+        </Button>
       </div>
 
       <Link href={href} className="block pt-5">
