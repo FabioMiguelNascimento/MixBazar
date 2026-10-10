@@ -28,6 +28,9 @@ type CustomerContextValue = {
   updateProfile: (profile: CustomerProfile) => void;
   favorites: string[];
   toggleFavorite: (id: string) => void;
+  isLoggedIn: boolean;
+  login: () => void;
+  logout: () => void;
 };
 
 const CustomerContext = createContext<CustomerContextValue | null>(null);
@@ -35,6 +38,7 @@ const CustomerContext = createContext<CustomerContextValue | null>(null);
 export function CustomerProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<CustomerProfile>(INITIAL_PROFILE);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const updateProfile = useCallback((next: CustomerProfile) => {
     setProfile(next);
@@ -48,9 +52,25 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const login = useCallback(() => {
+    setIsLoggedIn(true);
+  }, []);
+
+  const logout = useCallback(() => {
+    setIsLoggedIn(false);
+  }, []);
+
   const value = useMemo(
-    () => ({ profile, updateProfile, favorites, toggleFavorite }),
-    [profile, favorites, toggleFavorite, updateProfile],
+    () => ({
+      profile,
+      updateProfile,
+      favorites,
+      toggleFavorite,
+      isLoggedIn,
+      login,
+      logout,
+    }),
+    [profile, favorites, toggleFavorite, updateProfile, isLoggedIn, login, logout],
   );
 
   return (
