@@ -206,8 +206,8 @@
   --sidebar-foreground: var(--gunmetal);
   --sidebar-primary: var(--jungle);
   --sidebar-primary-foreground: var(--platinum);
-  --sidebar-accent: var(--lime);
-  --sidebar-accent-foreground: var(--gunmetal);
+  --sidebar-accent: color-mix(in oklch, var(--jungle) 10%, var(--platinum));
+  --sidebar-accent-foreground: var(--jungle);
 
   --sidebar-border: color-mix(in oklch, var(--gunmetal) 12%, var(--platinum));
 

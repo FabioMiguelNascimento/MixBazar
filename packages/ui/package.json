@@ -24,7 +24,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
+    "radix-ui": "^1.7.0",
     "react": "19.3.0"
   },
   "devDependencies": {
