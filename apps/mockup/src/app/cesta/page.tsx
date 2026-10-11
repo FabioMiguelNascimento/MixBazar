@@ -44,26 +44,29 @@ function PickerRow({ product, basketName, onAdd }: PickerRowProps) {
   const [justAdded, triggerAdded] = useJustAdded();
 
   return (
-    <li className="flex items-center gap-4 rounded-card border border-border bg-background p-3">
-      <img
-        src={product.images[0]}
-        alt={product.name}
-        className="size-16 shrink-0 rounded-input object-cover"
-      />
+    <li className="flex min-w-0 flex-col gap-3 rounded-card border border-border bg-background p-3 sm:flex-row sm:items-center sm:gap-4">
+      <div className="flex min-w-0 items-center gap-3 sm:flex-1 sm:gap-4">
+        <img
+          src={product.images[0]}
+          alt={product.name}
+          className="size-16 shrink-0 rounded-input object-cover"
+        />
 
-      <div className="min-w-0 flex-1">
-        <p className="truncate font-heading text-sm font-semibold tracking-tight text-gunmetal">
-          {product.name}
-        </p>
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-heading text-sm font-semibold tracking-tight text-gunmetal">
+            {product.name}
+          </p>
 
-        <p className="mt-0.5 text-sm text-pine/70">{product.price}</p>
+          <p className="mt-0.5 text-sm text-pine/70">{product.price}</p>
+        </div>
       </div>
 
-      <div
-        role="group"
-        aria-label={`Quantidade de ${product.name}`}
-        className="flex shrink-0 items-center gap-1 rounded-button border border-input p-0.5"
-      >
+      <div className="flex items-center justify-between gap-2 sm:justify-end sm:gap-4">
+        <div
+          role="group"
+          aria-label={`Quantidade de ${product.name}`}
+          className="flex shrink-0 items-center gap-1 rounded-button border border-input p-0.5"
+        >
         <Button
           iconOnly
           tone="muted"
@@ -119,6 +122,7 @@ function PickerRow({ product, basketName, onAdd }: PickerRowProps) {
           />
         )}
       </Button>
+      </div>
     </li>
   );
 }
@@ -355,7 +359,7 @@ export default function CestaPage() {
               <div className="mt-6 grid gap-10 pb-20 md:pb-24 lg:grid-cols-[1fr_360px] lg:gap-12">
                 <ul
                   aria-label={`Itens da cesta ${active.name}`}
-                  className="divide-y divide-border"
+                  className="min-w-0 divide-y divide-border"
                 >
                   {items.map((item) => (
                     <li
@@ -449,48 +453,52 @@ export default function CestaPage() {
                       />
                     </li>
                   ))}
-                  {complements.map((line) => (
-                    <li
-                      key={line.option.id}
-                      className="flex items-center gap-3 py-4"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="size-2.5 shrink-0 rounded-full bg-jungle"
-                      />
+                  {complements.length > 0 && (
+                    <li className="py-3">
+                      <ul
+                        aria-label="Complementos da cesta"
+                        className="ml-3 border-l-2 border-jungle/20 pl-3"
+                      >
+                        {complements.map((line) => (
+                          <li
+                            key={line.option.id}
+                            className="flex items-center gap-3 py-2"
+                          >
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-medium text-gunmetal">
+                                {line.option.name}
+                              </p>
 
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gunmetal">
-                          {line.option.name}
-                        </p>
+                              <p className="text-xs text-pine/70">
+                                {
+                                  complementGroups.find(
+                                    (group) => group.id === line.groupId,
+                                  )?.name
+                                }
+                              </p>
+                            </div>
 
-                        <p className="text-xs text-pine/70">
-                          {
-                            complementGroups.find(
-                              (group) => group.id === line.groupId,
-                            )?.name
-                          }
-                        </p>
-                      </div>
+                            <span className="shrink-0 text-sm font-medium text-gunmetal">
+                              {line.option.price}
+                            </span>
 
-                      <span className="shrink-0 text-sm font-medium text-gunmetal">
-                        {line.option.price}
-                      </span>
-
-                      <Button
-                        iconOnly
-                        tone="ghost"
-                        iconSize="sm"
-                        label={`Remover ${line.option.name} da cesta`}
-                        onClick={() => removeComplement(line.option.id)}
-                        className="shrink-0"
-                        icon={<X size={14} />}
-                      />
+                            <Button
+                              iconOnly
+                              tone="ghost"
+                              iconSize="sm"
+                              label={`Remover ${line.option.name} da cesta`}
+                              onClick={() => removeComplement(line.option.id)}
+                              className="shrink-0"
+                              icon={<X size={14} />}
+                            />
+                          </li>
+                        ))}
+                      </ul>
                     </li>
-                  ))}
+                  )}
                 </ul>
 
-                <aside className="h-fit rounded-card bg-platinum p-6 md:p-7 lg:sticky lg:top-24">
+                <aside className="h-fit min-w-0 lg:sticky lg:top-24 lg:rounded-card lg:bg-platinum lg:p-7">
                   <h2 className="font-heading text-xl font-semibold tracking-tight text-gunmetal">
                     Resumo
                   </h2>

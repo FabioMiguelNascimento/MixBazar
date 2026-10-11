@@ -6,19 +6,16 @@ import {
   ShoppingBag,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Confirmation } from "@/components/order-confirmation";
 import { ServiceBar } from "@/components/service-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { formatPrice, useBasket, type Order } from "@/context/basket";
+import { formatPrice, useBasket } from "@/context/basket";
 import {
   complementGroups,
   type ComplementGroup,
   type ComplementOption,
 } from "@/data/catalog";
-import { Button, buttonStyles } from "@repo/ui";
+import { buttonStyles } from "@repo/ui";
 
 function ComplementGroupBlock({
   group,
@@ -100,32 +97,9 @@ export default function ComplementosPage() {
     count,
     subtotal,
     toggleComplement,
-    sendActiveBasket,
   } = useBasket();
-  const [sent, setSent] = useState<Order | null>(null);
-  const router = useRouter();
 
   const active = baskets.find((basket) => basket.id === activeId) ?? baskets[0];
-
-  if (sent !== null) {
-    return (
-      <main className="flex min-h-svh flex-col bg-background text-foreground">
-        <ServiceBar />
-
-        <SiteHeader favoritesCount={0} activePath="/cesta" />
-
-        <div className="mx-auto w-full max-w-7xl flex-1 px-6">
-          <Confirmation
-            number={sent.number}
-            basketName={sent.name}
-            onBack={() => router.push("/cesta")}
-          />
-        </div>
-
-        <SiteFooter />
-      </main>
-    );
-  }
 
   if (!active || items.length === 0) {
     return (
@@ -202,7 +176,7 @@ export default function ComplementosPage() {
         </div>
 
         <div className="mt-10 grid gap-10 pb-20 md:pb-24 lg:grid-cols-[1fr_360px] lg:gap-12">
-          <div>
+          <div className="min-w-0">
             <ul
               aria-label={`Itens da cesta ${active.name}`}
               className="divide-y divide-border rounded-card border border-border bg-background px-5"
@@ -247,7 +221,7 @@ export default function ComplementosPage() {
             </div>
           </div>
 
-          <aside className="h-fit rounded-card bg-platinum p-6 md:p-7 lg:sticky lg:top-24">
+          <aside className="h-fit min-w-0 lg:sticky lg:top-24 lg:rounded-card lg:bg-platinum lg:p-7">
             <h2 className="font-heading text-xl font-semibold tracking-tight text-gunmetal">
               Resumo
             </h2>
@@ -284,15 +258,17 @@ export default function ComplementosPage() {
               separar os produtos.
             </p>
 
-            <Button
-              variant="primary"
-              size="xl"
-              onClick={() => setSent(sendActiveBasket())}
-              className="mt-5 w-full"
-            >
-              Enviar pedido
-              <ArrowRight size={17} />
-            </Button>
+                  <Link
+                    href="/pedido/novo"
+                    className={buttonStyles({
+                      variant: "primary",
+                      size: "xl",
+                      className: "mt-5 w-full",
+                    })}
+                  >
+                    Revisar pedido
+                    <ArrowRight size={17} />
+                  </Link>
           </aside>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { formatPrice } from "@/context/basket";
 import { useCart } from "@/context/cart";
+import { complementGroups } from "@/data/catalog";
 import {
   ArrowRight,
   Basket,
@@ -68,7 +69,7 @@ export default function CarrinhoPage() {
             </section>
 
             <div className="grid gap-10 pb-20 md:pb-24 lg:grid-cols-[1fr_360px] lg:gap-12">
-              <ul aria-label="Itens do carrinho" className="divide-y divide-border">
+              <ul aria-label="Itens do carrinho" className="min-w-0 divide-y divide-border">
                 {lines.map((line) => (
                   <li
                     key={line.id}
@@ -142,6 +143,37 @@ export default function CarrinhoPage() {
                           {formatPrice(line.unitPrice * line.qty)}
                         </span>
                       </div>
+
+                      {(line.complements ?? []).length > 0 && (
+                        <ul
+                          aria-label={`Adicionais da cesta ${line.name}`}
+                          className="ml-3 mt-2 border-l-2 border-jungle/20 pl-3"
+                        >
+                          {(line.complements ?? []).map((complement) => (
+                            <li
+                              key={complement.option.id}
+                              className="flex items-center gap-3 py-1 text-sm"
+                            >
+                              <p className="min-w-0 flex-1 truncate text-pine">
+                                {complement.option.name}{" "}
+                                <span className="text-pine/70">
+                                  ·{" "}
+                                  {
+                                    complementGroups.find(
+                                      (group) =>
+                                        group.id === complement.groupId,
+                                    )?.name
+                                  }
+                                </span>
+                              </p>
+
+                              <span className="shrink-0 font-medium text-gunmetal">
+                                {complement.option.price}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
 
                     <Button
@@ -157,7 +189,7 @@ export default function CarrinhoPage() {
                 ))}
               </ul>
 
-              <aside className="h-fit rounded-card bg-platinum p-6 md:p-7 lg:sticky lg:top-24">
+              <aside className="h-fit min-w-0 lg:sticky lg:top-24 lg:rounded-card lg:bg-platinum lg:p-7">
                 <h2 className="font-heading text-xl font-semibold tracking-tight text-gunmetal">
                   Resumo
                 </h2>
@@ -185,14 +217,14 @@ export default function CarrinhoPage() {
                 </p>
 
                 <Link
-                  href="/cesta"
+                  href="/pedido/novo?from=carrinho"
                   className={buttonStyles({
                     variant: "primary",
                     size: "xl",
                     className: "mt-5 w-full",
                   })}
                 >
-                  Montar cesta
+                  Fazer pedido
                   <ArrowRight size={17} />
                 </Link>
 
