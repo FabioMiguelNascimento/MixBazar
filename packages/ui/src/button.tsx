@@ -95,6 +95,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       iconSize = "md",
       type = "button",
       className,
+      iconOnly,
       ...rest
     } = props;
     return (
@@ -122,6 +123,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     type = "button",
     className,
     children,
+    iconOnly,
     ...rest
   } = props;
   return (
