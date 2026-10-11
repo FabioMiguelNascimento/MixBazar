@@ -12,8 +12,9 @@ import type {
   Basket,
   BasketItem,
   ComplementLine,
+  OrderLine,
 } from "@/context/basket";
-import type { Product } from "@/data/catalog";
+import { products, type Product } from "@/data/catalog";
 
 /* ------------------------------------------------------------------ */
 /* Carrinho do mockup — coleciona produtos avulsos e cestas montadas.  */
@@ -164,4 +165,34 @@ export function useCart(): CartContextValue {
     throw new Error("useCart deve ser usado dentro de CartProvider");
   }
   return cart;
+}
+
+export function cartLinesToOrderLines(lines: CartLine[]): OrderLine[] {
+  const orderLines: OrderLine[] = [];
+  for (const line of lines) {
+    if (line.kind === "product") {
+      const product = products.find((item) => item.id === line.refId);
+      if (product) {
+        orderLines.push({ kind: "product", product, quantity: line.qty });
+      }
+    } else {
+      orderLines.push({
+        kind: "basket",
+        basket: {
+          id: line.refId,
+          name: line.name,
+          items: (line.items ?? []).map((item) => ({
+            quantity: item.quantity,
+            product: { ...item.product },
+          })),
+          complements: (line.complements ?? []).map((complement) => ({
+            groupId: complement.groupId,
+            option: { ...complement.option },
+          })),
+        },
+        quantity: line.qty,
+      });
+    }
+  }
+  return orderLines;
 }

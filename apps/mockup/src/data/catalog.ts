@@ -401,3 +401,25 @@ export const complementGroups: ComplementGroup[] = [
     ],
   },
 ];
+
+export type Coupon = {
+  code: string;
+  kind: "percent" | "fixed";
+  value: number;
+  description: string;
+};
+
+export const coupons: Coupon[] = [
+  {
+    code: "MIX10",
+    kind: "percent",
+    value: 10,
+    description: "10% de desconto",
+  },
+  {
+    code: "PRESENTE5",
+    kind: "fixed",
+    value: 5,
+    description: "R$ 5,00 de desconto",
+  },
+];
