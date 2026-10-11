@@ -6,11 +6,9 @@ import { Button, buttonStyles } from "@repo/ui";
 
 export function Confirmation({
   number,
-  basketName,
   onBack,
 }: {
   number: number;
-  basketName: string;
   onBack: () => void;
 }) {
   return (
@@ -22,8 +20,8 @@ export function Confirmation({
       </h1>
 
       <p className="mt-3 max-w-md text-sm leading-6 text-pine/70 md:text-base">
-        Sua cesta “{basketName}” foi enviada como o pedido #{number}. O Mix
-        Bazar vai confirmar tudo pelo atendimento.
+        Seu pedido #{number} foi enviado. O Mix Bazar vai confirmar tudo pelo
+        atendimento.
       </p>
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
