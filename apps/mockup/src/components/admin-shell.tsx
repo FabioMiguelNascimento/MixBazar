@@ -206,9 +206,11 @@ function AdminSidebar({ active }: { active: string }) {
 
 export function AdminShell({
   active,
+  title,
   children,
 }: {
   active: string;
+  title: string;
   children: React.ReactNode;
 }) {
   return (
@@ -216,12 +218,12 @@ export function AdminShell({
       <AdminSidebar active={active} />
 
       <SidebarInset>
-        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background/95 px-4 backdrop-blur">
-          <SidebarTrigger />
-          <span className="rounded-button bg-jungle/10 px-3 py-1 text-xs font-semibold text-jungle md:hidden">
-            Admin
-          </span>
-          <span className="ml-auto flex shrink-0 items-center gap-1">
+        <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur">
+          <SidebarTrigger className="shrink-0" />
+          <h1 className="min-w-0 flex-1 truncate font-heading text-base font-semibold tracking-tight text-gunmetal">
+            {title}
+          </h1>
+          <span className="flex shrink-0 items-center gap-1">
             <AlertsBell />
             <Link
               href="/mockup/home"
