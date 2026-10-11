@@ -2,8 +2,8 @@
 
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState, type FormEvent } from "react";
 import { useCustomer } from "@/context/customer";
 import { Button } from "@repo/ui";
 
@@ -11,9 +11,10 @@ function isValidEmail(value: string) {
   return /.+@.+\..+/.test(value.trim());
 }
 
-export default function LoginPage() {
+function LoginForm() {
   const { login } = useCustomer();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
@@ -40,7 +41,12 @@ export default function LoginPage() {
     }
 
     login();
-    router.push("/conta");
+    const next = searchParams.get("next");
+    router.push(
+      next !== null && next.startsWith("/") && !next.startsWith("//")
+        ? next
+        : "/conta",
+    );
   }
 
   return (
@@ -179,5 +185,13 @@ export default function LoginPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }
