@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Montserrat } from "next/font/google";
 import { BasketProvider } from "@/context/basket";
+import { AdminProvider } from "@/context/admin";
 import { CartProvider } from "@/context/cart";
 import { CustomerProvider } from "@/context/customer";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -31,7 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <TooltipProvider>
           <CustomerProvider>
             <CartProvider>
-              <BasketProvider>{children}</BasketProvider>
+              <BasketProvider>
+                <AdminProvider>{children}</AdminProvider>
+              </BasketProvider>
             </CartProvider>
           </CustomerProvider>
         </TooltipProvider>
