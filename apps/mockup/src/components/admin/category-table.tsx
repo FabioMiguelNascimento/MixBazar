@@ -204,7 +204,15 @@ export function CategoryTable({
               <ContextMenu key={row.id}>
                 <ContextMenuTrigger asChild>
                   <TableRow
-                    onClick={() => onEdit(row.original)}
+                    onClick={(event) => {
+                      if (
+                        (event.target as HTMLElement).closest("tr") !==
+                        event.currentTarget
+                      ) {
+                        return;
+                      }
+                      onEdit(row.original);
+                    }}
                     onKeyDown={(event) => {
                       if (
                         event.key === "Enter" &&
