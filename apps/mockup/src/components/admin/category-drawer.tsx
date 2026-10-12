@@ -58,7 +58,7 @@ export function CategoryDrawer({
         if (!next) onClose();
       }}
     >
-      <SheetContent aria-describedby={undefined} className="w-[94vw] p-0">
+      <SheetContent aria-describedby={undefined} className="p-0">
         <SheetHeader className="shrink-0 border-b border-border px-6 py-4">
           <SheetTitle>
             {editing ? "Editar categoria" : "Nova categoria"}
