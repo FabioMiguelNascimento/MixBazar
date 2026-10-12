@@ -14,7 +14,20 @@ import {
   CaretRight,
   DotsThree,
   FolderSimple,
+  Pause,
+  PencilSimple,
+  Play,
 } from "@phosphor-icons/react/dist/ssr";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  ResponsiveMenu,
+  ResponsiveMenuContent,
+  ResponsiveMenuTrigger,
+  type ResponsiveMenuItem,
+} from "@repo/ui";
 import {
   Table,
   TableBody,
@@ -62,12 +75,28 @@ const columnHelper = createColumnHelper<typeof features, AdminCategory>();
 export function CategoryTable({
   items,
   onEdit,
-  onMenu,
+  onToggle,
 }: {
   items: AdminCategory[];
   onEdit: (item: AdminCategory) => void;
-  onMenu: (item: AdminCategory, anchor: Element, point?: { x: number; y: number }) => void;
+  onToggle: (id: string) => void;
 }) {
+  function menuItems(item: AdminCategory): ResponsiveMenuItem[] {
+    const ToggleIcon = item.active ? Pause : Play;
+    return [
+      {
+        label: "Editar",
+        icon: <PencilSimple size={16} />,
+        onSelect: () => onEdit(item),
+      },
+      {
+        label: item.active ? "Pausar" : "Ativar",
+        icon: <ToggleIcon size={16} />,
+        onSelect: () => onToggle(item.id),
+      },
+    ];
+  }
+
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -113,28 +142,29 @@ export function CategoryTable({
           const item = row.original;
           return (
             <span className="flex justify-end">
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  const rect = event.currentTarget.getBoundingClientRect();
-                  onMenu(item, event.currentTarget, {
-                    x: rect.left + rect.width / 2,
-                    y: rect.bottom,
-                  });
-                }}
-                aria-label={`Ações de ${item.name}`}
-                aria-haspopup="dialog"
-                className="flex size-9 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle"
-              >
-                <DotsThree size={20} weight="bold" />
-              </button>
+              <ResponsiveMenu>
+                <ResponsiveMenuTrigger>
+                  <button
+                    type="button"
+                    onClick={(event) => event.stopPropagation()}
+                    aria-label={`Ações de ${item.name}`}
+                    className="flex size-9 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle"
+                  >
+                    <DotsThree size={20} weight="bold" />
+                  </button>
+                </ResponsiveMenuTrigger>
+                <ResponsiveMenuContent
+                  label={item.name}
+                  items={menuItems(item)}
+                />
+              </ResponsiveMenu>
             </span>
           );
         },
       }),
     ],
-    [onMenu],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const table = useTable({
@@ -171,40 +201,50 @@ export function CategoryTable({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                onClick={() => onEdit(row.original)}
-                onContextMenu={(event) => {
-                  event.preventDefault();
-                  onMenu(row.original, event.currentTarget, {
-                    x: event.clientX,
-                    y: event.clientY,
-                  });
-                }}
-                onKeyDown={(event) => {
-                  if (
-                    event.key === "Enter" &&
-                    !(event.target as HTMLElement).closest("button")
-                  ) {
-                    onEdit(row.original);
-                  }
-                }}
-                tabIndex={0}
-                className="cursor-pointer"
-              >
-                  {row.getAllCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={
-                        cell.column.id === "status"
-                          ? `py-2 ${ALIGN[cell.column.columnDef.meta?.align ?? "left"]} ${tones[STATUS_TONE[row.original.active ? "ativa" : "pausada"]]} text-gunmetal`
-                          : "py-2"
+              <ContextMenu key={row.id}>
+                <ContextMenuTrigger asChild>
+                  <TableRow
+                    onClick={() => onEdit(row.original)}
+                    onKeyDown={(event) => {
+                      if (
+                        event.key === "Enter" &&
+                        !(event.target as HTMLElement).closest("button")
+                      ) {
+                        onEdit(row.original);
                       }
+                    }}
+                    tabIndex={0}
+                    className="cursor-pointer"
+                  >
+                    {row.getAllCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className={
+                          cell.column.id === "status"
+                            ? `py-2 ${ALIGN[cell.column.columnDef.meta?.align ?? "left"]} ${tones[STATUS_TONE[row.original.active ? "ativa" : "pausada"]]} text-gunmetal`
+                            : "py-2"
+                        }
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </ContextMenuTrigger>
+                <ContextMenuContent>
+                  {menuItems(row.original).map((entry) => (
+                    <ContextMenuItem
+                      key={entry.label}
+                      onSelect={entry.onSelect}
                     >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
+                      {entry.icon}
+                      {entry.label}
+                    </ContextMenuItem>
+                  ))}
+                </ContextMenuContent>
+              </ContextMenu>
             ))}
           </TableBody>
         </Table>

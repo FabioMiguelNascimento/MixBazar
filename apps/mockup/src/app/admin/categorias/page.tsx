@@ -5,7 +5,6 @@ import { Plus } from "@phosphor-icons/react/dist/ssr";
 import { AdminPageHeader } from "@/components/admin-page-header";
 import { AdminShell } from "@/components/admin-shell";
 import { CategoryDrawer } from "@/components/admin/category-drawer";
-import { CategoryMenu } from "@/components/admin/category-menu";
 import {
   seedCategories,
   slugify,
@@ -22,11 +21,6 @@ export default function AdminCategoriesPage() {
     id: PickerId;
     anchor: Element;
   } | null>(null);
-  const [menu, setMenu] = useState<{
-    id: string;
-    anchor: Element;
-    point?: { x: number; y: number };
-  } | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [active, setActive] = useState(true);
@@ -38,7 +32,6 @@ export default function AdminCategoriesPage() {
 
   const trimmed = name.trim();
   const editing = editingId !== null;
-  const menuItem = items.find((item) => item.id === menu?.id) ?? null;
 
   function openNew() {
     setEditingId(null);
@@ -90,20 +83,11 @@ export default function AdminCategoriesPage() {
   }
 
   function toggleActive(id: string) {
-    setItems(
-      items.map((item) =>
+    setItems((prev) =>
+      prev.map((item) =>
         item.id === id ? { ...item, active: !item.active } : item,
       ),
     );
-  }
-
-  function openMenu(
-    item: AdminCategory,
-    anchor: Element,
-    point?: { x: number; y: number },
-  ) {
-    setPicker(null);
-    setMenu({ id: item.id, anchor, point });
   }
 
   return (
@@ -122,7 +106,11 @@ export default function AdminCategoriesPage() {
       />
 
       <div className="mt-10 min-w-0">
-        <CategoryTable items={items} onEdit={openEdit} onMenu={openMenu} />
+        <CategoryTable
+          items={items}
+          onEdit={openEdit}
+          onToggle={toggleActive}
+        />
       </div>
 
       <CategoryDrawer
@@ -151,15 +139,6 @@ export default function AdminCategoriesPage() {
         onTint={setTint}
         onImage={setImage}
         onClose={() => setPicker(null)}
-      />
-
-      <CategoryMenu
-        item={menuItem}
-        anchor={menu?.anchor ?? null}
-        point={menu?.point ?? null}
-        onClose={() => setMenu(null)}
-        onEdit={openEdit}
-        onToggle={toggleActive}
       />
     </AdminShell>
   );
