@@ -38,18 +38,22 @@ export type Alert = {
   linkLabel: string;
 };
 
+export type UpcomingDelivery = AdminOrder & {
+  timeLabel: string;
+};
+
 type AdminContextValue = {
   period: Period;
   setPeriod: (period: Period) => void;
-  statusFilter: OrderStatus | null;
-  toggleStatusFilter: (status: OrderStatus) => void;
   funnel: { status: OrderStatus; count: number; value: number }[];
   revenue: number;
   confirmedCount: number;
   ticket: number;
   pendingCount: number;
+  revenueByDay: { label: string; value: number }[];
   topProducts: TopProduct[];
   activity: ActivityEvent[];
+  upcoming: UpcomingDelivery[];
   alerts: Alert[];
   campaigns: AdminCampaign[];
 };
@@ -65,6 +69,7 @@ function sessionOrderToAdmin(order: Order, customer: string): AdminOrder {
     total: Math.max(0, order.subtotal - order.discount),
     couponCode: order.couponCode,
     status: "novo",
+    mode: order.pickup ? "retirada" : "entrega",
     daysAgo: 0,
     hoursStuck: 0,
   };
@@ -74,11 +79,6 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const { orders } = useBasket();
   const { profile } = useCustomer();
   const [period, setPeriod] = useState<Period>("7d");
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | null>(null);
-
-  const toggleStatusFilter = useCallback((status: OrderStatus) => {
-    setStatusFilter((current) => (current === status ? null : status));
-  }, []);
 
   const allOrders = useMemo<AdminOrder[]>(() => {
     const session = orders.map((order) =>
@@ -114,6 +114,24 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const ticket = confirmedCount > 0 ? revenue / confirmedCount : 0;
   const pendingCount = funnel[0]?.count ?? 0;
 
+  const revenueByDay = useMemo(() => {
+    const today = new Date();
+    return Array.from({ length: 7 }, (_, back) => {
+      const daysAgo = 6 - back;
+      const date = new Date(today);
+      date.setDate(today.getDate() - daysAgo);
+      return {
+        label: date
+          .toLocaleDateString("pt-BR", { weekday: "long" })
+          .replace("-feira", "")
+          .replace(/^./, (char) => char.toUpperCase()),
+        value: confirmed
+          .filter((order) => order.daysAgo === daysAgo)
+          .reduce((total, order) => total + order.total, 0),
+      };
+    });
+  }, [confirmed]);
+
   const activity = useMemo<ActivityEvent[]>(() => {
     const events: ActivityEvent[] = visibleOrders.map((order) => ({
       id: `order-${order.id}`,
@@ -122,12 +140,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       time: order.daysAgo === 0 ? "hoje" : `há ${order.daysAgo}d`,
       status: order.status,
     }));
-    const filtered =
-      statusFilter === null
-        ? events
-        : events.filter((event) => event.status === statusFilter);
-    return filtered.slice(0, 8);
-  }, [visibleOrders, statusFilter]);
+    return events.slice(0, 8);
+  }, [visibleOrders]);
 
   const alerts = useMemo<Alert[]>(() => {
     const found: Alert[] = [];
@@ -138,7 +152,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       found.push({
         id: "stuck",
         text: `${stuck.length} ${stuck.length === 1 ? "pedido parado" : "pedidos parados"} sem confirmação há mais de 24h.`,
-        href: "/mockup/admin",
+        href: "/admin/pedidos",
         linkLabel: "Ver pedidos",
       });
     }
@@ -149,7 +163,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       found.push({
         id: `expiring-${campaign.id}`,
         text: `Campanha ${campaign.name} termina em ${campaign.daysLeft} dias.`,
-        href: "/mockup/admin",
+        href: "/admin/campanhas",
         linkLabel: "Ver campanhas",
       });
     }
@@ -160,25 +174,42 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       found.push({
         id: `hot-${campaign.id}`,
         text: `Cupom ${campaign.couponCode} acima de 80% do uso.`,
-        href: "/mockup/admin",
+        href: "/admin/cupons",
         linkLabel: "Ver cupons",
       });
     }
     return found;
   }, [visibleOrders]);
 
+  const upcoming = useMemo<UpcomingDelivery[]>(() => {
+    const rank: Record<OrderStatus, number> = {
+      pronto: 0,
+      preparo: 1,
+      novo: 2,
+      entregue: 3,
+    };
+    return visibleOrders
+      .filter((order) => order.status !== "entregue")
+      .sort((a, b) => rank[a.status] - rank[b.status])
+      .slice(0, 6)
+      .map((order) => ({
+        ...order,
+        timeLabel: order.daysAgo === 0 ? "hoje" : `há ${order.daysAgo}d`,
+      }));
+  }, [visibleOrders]);
+
   const value: AdminContextValue = {
     period,
     setPeriod,
-    statusFilter,
-    toggleStatusFilter,
     funnel,
     revenue,
     confirmedCount,
     ticket,
     pendingCount,
+    revenueByDay,
     topProducts: seedTopProducts,
     activity,
+    upcoming,
     alerts,
     campaigns: seedCampaigns,
   };

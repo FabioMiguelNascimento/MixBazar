@@ -48,7 +48,7 @@ export type AdminNavItem = {
 };
 
 export const ADMIN_NAV: AdminNavItem[] = [
-  { label: "Dashboard", href: "/mockup/admin", icon: SquaresFour },
+  { label: "Dashboard", href: "/admin", icon: SquaresFour },
   { label: "Produtos", href: null, icon: Package },
   { label: "Categorias", href: null, icon: FolderSimple },
   { label: "Banners", href: null, icon: Images },
@@ -150,7 +150,7 @@ function AdminSidebar({ active }: { active: string }) {
     <Sidebar>
       <SidebarHeader>
         <Link
-          href="/mockup/home"
+          href="/home"
           aria-label="Mix Bazar — voltar à loja"
           className="flex items-center gap-2.5 px-2 py-1"
         >
@@ -226,7 +226,7 @@ export function AdminShell({
           <span className="flex shrink-0 items-center gap-1">
             <AlertsBell />
             <Link
-              href="/mockup/home"
+              href="/home"
               className="hidden whitespace-nowrap text-sm font-medium text-jungle transition hover:text-pine sm:block"
             >
               Voltar à loja
