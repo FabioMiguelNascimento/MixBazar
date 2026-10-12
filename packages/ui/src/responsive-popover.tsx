@@ -26,17 +26,27 @@ type ResponsivePopoverRootProps = {
   onOpenChange?: (open: boolean) => void;
   modal?: boolean;
   anchorEl?: Element | null;
+  anchorPoint?: { x: number; y: number } | null;
   children: React.ReactNode;
 };
 
-function ResponsivePopover({ anchorEl, children, ...props }: ResponsivePopoverRootProps) {
+function ResponsivePopover({
+  anchorEl,
+  anchorPoint,
+  children,
+  ...props
+}: ResponsivePopoverRootProps) {
   const isDesktop = useIsDesktop();
   const virtualRef = React.useRef<{
     getBoundingClientRect: () => DOMRect;
   } | null>(null);
-  virtualRef.current = anchorEl
-    ? { getBoundingClientRect: () => anchorEl.getBoundingClientRect() }
-    : null;
+  virtualRef.current = anchorPoint
+    ? {
+        getBoundingClientRect: () => new DOMRect(anchorPoint.x, anchorPoint.y),
+      }
+    : anchorEl
+      ? { getBoundingClientRect: () => anchorEl.getBoundingClientRect() }
+      : null;
 
   return (
     <DesktopContext.Provider value={isDesktop}>
