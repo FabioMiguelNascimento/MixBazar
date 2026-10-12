@@ -4,21 +4,10 @@ import * as React from "react";
 import { cn } from "cn";
 
 import { Popover, PopoverAnchor, PopoverContent } from "./popover.js";
+import { useIsDesktop } from "./hooks/use-is-desktop.js";
 import { Sheet, SheetContent } from "./sheet.js";
 
 const DesktopContext = React.createContext(false);
-
-function useIsDesktop(breakpoint = 640) {
-  const [isDesktop, setIsDesktop] = React.useState(false);
-  React.useEffect(() => {
-    const query = window.matchMedia(`(min-width: ${breakpoint}px)`);
-    const update = () => setIsDesktop(query.matches);
-    update();
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, [breakpoint]);
-  return isDesktop;
-}
 
 type ResponsivePopoverRootProps = {
   open?: boolean;
