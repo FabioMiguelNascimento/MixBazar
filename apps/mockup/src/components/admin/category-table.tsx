@@ -117,7 +117,11 @@ export function CategoryTable({
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation();
-                  onMenu(item, event.currentTarget);
+                  const rect = event.currentTarget.getBoundingClientRect();
+                  onMenu(item, event.currentTarget, {
+                    x: rect.left + rect.width / 2,
+                    y: rect.bottom,
+                  });
                 }}
                 aria-label={`Ações de ${item.name}`}
                 aria-haspopup="dialog"
