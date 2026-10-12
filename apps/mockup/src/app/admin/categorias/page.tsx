@@ -335,7 +335,7 @@ export default function AdminCategoriesPage() {
 
   const columnHelper = useMemo(
     () => createColumnHelper<typeof features, AdminCategory>(),
-    [features],
+    [],
   );
 
   const columns = useMemo(
@@ -350,9 +350,9 @@ export default function AdminCategoriesPage() {
           return (
             <span className="flex min-w-0 items-center gap-3">
               <span
-                className={`flex size-10 shrink-0 items-center justify-center rounded-input ${item.tint}`}
+                className={`flex size-8 shrink-0 items-center justify-center rounded-input ${item.tint}`}
               >
-                <Icon size={18} />
+                <Icon size={16} />
               </span>
               <span className="min-w-0">
                 <span className="block truncate text-sm font-medium text-gunmetal">
@@ -429,14 +429,16 @@ export default function AdminCategoriesPage() {
         }
       />
 
-      <div className="mt-10 min-w-0">
-        <div className="min-w-0 overflow-x-auto">
-          <Table aria-label="Categorias">
-            <TableHeader>
-              {table.getHeaderGroups().map((group) => (
-                <TableRow key={group.id}>
-                  {group.headers.map((header) => (
-                    <TableHead key={header.id}>
+      <div className="-mx-4 min-w-0 md:-mx-6 [&_[data-slot=table-container]]:max-h-[65dvh] [&_[data-slot=table-container]]:overflow-y-auto [&_[data-slot=table-container]]:rounded-none [&_[data-slot=table-container]]:border-x-0 [&_[data-slot=table-header]]:sticky [&_[data-slot=table-header]]:top-0 [&_[data-slot=table-header]]:bg-background">
+        <Table aria-label="Categorias">
+          <TableHeader>
+            {table.getHeaderGroups().map((group) => (
+              <TableRow key={group.id}>
+                {group.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="h-9 normal-case tracking-normal"
+                  >
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext(),
@@ -451,6 +453,13 @@ export default function AdminCategoriesPage() {
                 <TableRow
                   key={row.id}
                   onClick={() => openEdit(row.original)}
+                  onContextMenu={(event) => {
+                    event.preventDefault();
+                    openMenu(
+                      row.original,
+                      event.currentTarget as Element,
+                    );
+                  }}
                   onKeyDown={(event) => {
                     if (
                       event.key === "Enter" &&
@@ -463,7 +472,7 @@ export default function AdminCategoriesPage() {
                   className="cursor-pointer"
                 >
                   {row.getAllCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="py-2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -502,7 +511,6 @@ export default function AdminCategoriesPage() {
             </button>
           </div>
         </div>
-      </div>
 
       <Sheet
         open={dialogOpen}

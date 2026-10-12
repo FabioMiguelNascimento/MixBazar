@@ -1,9 +1,9 @@
 "use client";
 
-import * as React from "react";
+import { X } from "@phosphor-icons/react/dist/ssr/X";
 import { cn } from "cn";
 import { Dialog as SheetPrimitive } from "radix-ui";
-import { X } from "@phosphor-icons/react/dist/ssr/X";
+import * as React from "react";
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
@@ -55,9 +55,9 @@ function SheetContent({
         className={cn(
           "fixed z-50 flex flex-col gap-4 bg-background shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500",
           side === "right" &&
-            "inset-y-0 right-0 h-full w-3/4 border-l border-border data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
+            "inset-y-0 right-0 h-full w-3/4 border-l border-border data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-[65dvw]!",
           side === "left" &&
-            "inset-y-0 left-0 h-full w-3/4 border-l border-border data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
+            "inset-y-0 left-0 h-full w-3/4 border-l border-border data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-[65dvw]!",
           side === "top" &&
             "inset-x-0 top-0 h-auto border-b border-border data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
           side === "bottom" &&
@@ -115,13 +115,13 @@ function SheetDescription({
 
 export {
   Sheet,
-  SheetTrigger,
   SheetClose,
-  SheetPortal,
-  SheetOverlay,
   SheetContent,
-  SheetHeader,
-  SheetFooter,
-  SheetTitle,
   SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetOverlay,
+  SheetPortal,
+  SheetTitle,
+  SheetTrigger,
 };
