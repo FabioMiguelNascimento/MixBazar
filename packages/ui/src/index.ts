@@ -70,6 +70,14 @@ export {
 } from "./responsive-popover.js";
 export { Separator } from "./separator.js";
 export {
+  Select,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectItemText,
+} from "./select.js";
+export {
   Sheet,
   SheetTrigger,
   SheetClose,

@@ -49,7 +49,7 @@ export type AdminNavItem = {
 
 export const ADMIN_NAV: AdminNavItem[] = [
   { label: "Dashboard", href: "/admin", icon: SquaresFour },
-  { label: "Produtos", href: null, icon: Package },
+  { label: "Produtos", href: "/admin/produtos", icon: Package },
   { label: "Categorias", href: "/admin/categorias", icon: FolderSimple },
   { label: "Banners", href: null, icon: Images },
   { label: "Cupons", href: null, icon: Ticket },
