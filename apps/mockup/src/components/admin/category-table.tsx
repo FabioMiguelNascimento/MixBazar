@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   createColumnHelper,
   createPaginatedRowModel,
@@ -17,6 +17,7 @@ import {
   Pause,
   PencilSimple,
   Play,
+  Trash,
 } from "@phosphor-icons/react/dist/ssr";
 import {
   ContextMenu,
@@ -76,11 +77,24 @@ export function CategoryTable({
   items,
   onEdit,
   onToggle,
+  onDelete,
 }: {
   items: AdminCategory[];
   onEdit: (item: AdminCategory) => void;
   onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
 }) {
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [menu, setMenu] = useState<{
+    id: string;
+    source: "dots" | "ctx";
+  } | null>(null);
+
+  function closeMenu() {
+    setMenu(null);
+    setConfirmId(null);
+  }
+
   function menuItems(item: AdminCategory): ResponsiveMenuItem[] {
     const ToggleIcon = item.active ? Pause : Play;
     return [
@@ -94,7 +108,52 @@ export function CategoryTable({
         icon: <ToggleIcon size={16} />,
         onSelect: () => onToggle(item.id),
       },
+      {
+        label: "Excluir",
+        icon: <Trash size={16} />,
+        destructive: true,
+        keepOpen: true,
+        onSelect: () => setConfirmId(item.id),
+      },
     ];
+  }
+
+  function confirmDelete(item: AdminCategory) {
+    const count = productCount(item.name);
+    const blocked = count > 0;
+    return (
+      <div className="grid gap-2 p-1">
+        <p className="font-heading text-sm font-semibold text-gunmetal">
+          Excluir {item.name}?
+        </p>
+        <p className="text-sm leading-6 text-pine">
+          {blocked
+            ? `Esta categoria tem ${count} ${count === 1 ? "produto vinculado" : "produtos vinculados"} e não pode ser excluída.`
+            : "A categoria será removida permanentemente."}
+        </p>
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => setConfirmId(null)}
+            className="rounded-button border border-border px-4 py-2 text-sm font-medium text-gunmetal transition hover:border-jungle"
+          >
+            Voltar
+          </button>
+          {!blocked && (
+            <button
+              type="button"
+              onClick={() => {
+                onDelete(item.id);
+                closeMenu();
+              }}
+              className="rounded-button border border-danger-border bg-danger-bg px-4 py-2 text-sm font-medium text-danger-text transition hover:opacity-90"
+            >
+              Excluir
+            </button>
+          )}
+        </div>
+      </div>
+    );
   }
 
   const columns = useMemo(
@@ -142,11 +201,20 @@ export function CategoryTable({
           const item = row.original;
           return (
             <span className="flex justify-end">
-              <ResponsiveMenu>
+              <ResponsiveMenu
+                open={menu?.id === item.id && menu?.source === "dots"}
+                onOpenChange={(next) => {
+                  setMenu(next ? { id: item.id, source: "dots" } : null);
+                  if (!next) setConfirmId(null);
+                }}
+              >
                 <ResponsiveMenuTrigger>
                   <button
                     type="button"
-                    onClick={(event) => event.stopPropagation()}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setConfirmId(null);
+                    }}
                     aria-label={`Ações de ${item.name}`}
                     className="flex size-9 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle"
                   >
@@ -156,7 +224,9 @@ export function CategoryTable({
                 <ResponsiveMenuContent
                   label={item.name}
                   items={menuItems(item)}
-                />
+                >
+                  {confirmId === item.id ? confirmDelete(item) : undefined}
+                </ResponsiveMenuContent>
               </ResponsiveMenu>
             </span>
           );
@@ -164,7 +234,7 @@ export function CategoryTable({
       }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [menu, confirmId],
   );
 
   const table = useTable({
@@ -201,7 +271,18 @@ export function CategoryTable({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.map((row) => (
-              <ContextMenu key={row.id}>
+              <ContextMenu
+                key={row.id}
+                open={menu?.id === row.original.id && menu?.source === "ctx"}
+                onOpenChange={(next) => {
+                  setMenu(
+                    next
+                      ? { id: row.original.id, source: "ctx" }
+                      : null,
+                  );
+                  if (!next) setConfirmId(null);
+                }}
+              >
                 <ContextMenuTrigger asChild>
                   <TableRow
                     onClick={(event) => {
@@ -242,16 +323,22 @@ export function CategoryTable({
                   </TableRow>
                 </ContextMenuTrigger>
                 <ContextMenuContent>
-                  {menuItems(row.original).map((entry) => (
-                    <ContextMenuItem
-                      key={entry.label}
-                      onClick={(event) => event.stopPropagation()}
-                      onSelect={entry.onSelect}
-                    >
-                      {entry.icon}
-                      {entry.label}
-                    </ContextMenuItem>
-                  ))}
+                      {row.original.id === confirmId
+                    ? confirmDelete(row.original)
+                    : menuItems(row.original).map((entry) => (
+                        <ContextMenuItem
+                          key={entry.label}
+                          variant={entry.destructive ? "destructive" : "default"}
+                          onClick={(event) => event.stopPropagation()}
+                          onSelect={(event) => {
+                            if (entry.keepOpen) event.preventDefault();
+                            entry.onSelect();
+                          }}
+                        >
+                          {entry.icon}
+                          {entry.label}
+                        </ContextMenuItem>
+                      ))}
                 </ContextMenuContent>
               </ContextMenu>
             ))}

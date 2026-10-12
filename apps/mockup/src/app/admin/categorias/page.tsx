@@ -110,6 +110,9 @@ export default function AdminCategoriesPage() {
           items={items}
           onEdit={openEdit}
           onToggle={toggleActive}
+          onDelete={(id) =>
+            setItems((prev) => prev.filter((item) => item.id !== id))
+          }
         />
       </div>
 
