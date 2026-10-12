@@ -110,6 +110,7 @@ export {
 export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants } from "./tabs.js";
 export { Textarea } from "./textarea.js";
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./tooltip.js";
+export { tones, type Tone } from "./tones.js";
 
 export const colors = {
   jungle: "oklch(0.6324 0.1518 142.15)",

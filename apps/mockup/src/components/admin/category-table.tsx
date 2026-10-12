@@ -16,16 +16,17 @@ import {
   FolderSimple,
 } from "@phosphor-icons/react/dist/ssr";
 import {
-  Badge,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  tones,
 } from "@repo/ui";
 import {
   ICONS,
+  STATUS_TONE,
   productCount,
   type AdminCategory,
 } from "@/components/admin/category-model";
@@ -77,11 +78,16 @@ export function CategoryTable({
       columnHelper.display({
         id: "status",
         header: "Status",
-        cell: ({ row }) => (
-          <Badge variant={row.original.active ? "default" : "secondary"}>
-            {row.original.active ? "Ativa" : "Pausada"}
-          </Badge>
-        ),
+        cell: ({ row }) => {
+          const status = row.original.active ? "ativa" : "pausada";
+          return (
+            <span
+              className={`-mx-4 -my-2 block px-4 py-2 text-sm font-medium ${tones[STATUS_TONE[status]]}`}
+            >
+              {row.original.active ? "Ativa" : "Pausada"}
+            </span>
+          );
+        },
       }),
       columnHelper.display({
         id: "acoes",

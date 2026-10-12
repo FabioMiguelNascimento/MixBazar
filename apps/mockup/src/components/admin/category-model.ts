@@ -48,6 +48,13 @@ const ICON_BY_NAME: Record<string, string> = {
   Encomendas: "package",
 };
 
+import type { Tone } from "@repo/ui";
+
+export const STATUS_TONE: Record<"ativa" | "pausada", Tone> = {
+  ativa: "jungle",
+  pausada: "neutral",
+};
+
 export function slugify(name: string) {
   const slug = name
     .toLowerCase()
