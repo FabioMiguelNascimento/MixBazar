@@ -24,12 +24,33 @@ import {
   TableRow,
   tones,
 } from "@repo/ui";
+import type {
+  CellData,
+  RowData,
+  TableFeatures,
+} from "@tanstack/table-core";
 import {
   ICONS,
   STATUS_TONE,
   productCount,
   type AdminCategory,
 } from "@/components/admin/category-model";
+
+declare module "@tanstack/table-core" {
+  interface ColumnMeta<
+    TFeatures extends TableFeatures,
+    TData extends RowData,
+    TValue extends CellData,
+  > {
+    align?: "left" | "center" | "right";
+  }
+}
+
+const ALIGN = {
+  left: "text-left",
+  center: "text-center",
+  right: "text-right",
+} as const;
 
 const features = tableFeatures({
   rowPaginationFeature,
@@ -78,6 +99,7 @@ export function CategoryTable({
       columnHelper.display({
         id: "status",
         header: "Status",
+        meta: { align: "center" },
         cell: ({ row }) => (
           <span className="text-sm font-medium">
             {row.original.active ? "Ativa" : "Pausada"}
@@ -132,7 +154,7 @@ export function CategoryTable({
                 {group.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="h-9 normal-case tracking-normal"
+                    className={`h-9 normal-case tracking-normal ${ALIGN[header.column.columnDef.meta?.align ?? "left"]}`}
                   >
                     {flexRender(
                       header.column.columnDef.header,
@@ -166,15 +188,15 @@ export function CategoryTable({
                 tabIndex={0}
                 className="cursor-pointer"
               >
-                {row.getAllCells().map((cell) => (
-                  <TableCell
-                    key={cell.id}
-                    className={
-                      cell.column.id === "status"
-                        ? `py-2 ${tones[STATUS_TONE[row.original.active ? "ativa" : "pausada"]]}`
-                        : "py-2"
-                    }
-                  >
+                  {row.getAllCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className={
+                        cell.column.id === "status"
+                          ? `py-2 ${ALIGN[cell.column.columnDef.meta?.align ?? "left"]} ${tones[STATUS_TONE[row.original.active ? "ativa" : "pausada"]]} text-gunmetal`
+                          : "py-2"
+                      }
+                    >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
