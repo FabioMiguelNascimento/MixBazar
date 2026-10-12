@@ -25,6 +25,7 @@ function ContextMenuContent({
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.Content
         data-slot="context-menu-content"
+        onClick={(event) => event.stopPropagation()}
         className={cn(
           "z-50 max-h-(--radix-context-menu-content-available-height) w-60 origin-(--radix-context-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-card border border-border bg-background p-1 text-gunmetal shadow-lg outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           className

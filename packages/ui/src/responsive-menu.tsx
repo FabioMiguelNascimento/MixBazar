@@ -70,6 +70,7 @@ function ResponsiveMenuContent({
         side="bottom"
         align="end"
         sideOffset={8}
+        onClick={(event) => event.stopPropagation()}
         className={cn("w-60", className)}
       >
         <ButtonGroup orientation="vertical" className="w-full">
@@ -90,7 +91,11 @@ function ResponsiveMenuContent({
     );
   }
   return (
-    <SheetContent side="bottom" className="max-h-[92dvh] gap-0 rounded-t-card p-0">
+    <SheetContent
+      side="bottom"
+      onClick={(event) => event.stopPropagation()}
+      className="max-h-[92dvh] gap-0 rounded-t-card p-0"
+    >
       <span
         aria-hidden="true"
         className="mx-auto mb-1 mt-3 block h-1 w-10 shrink-0 rounded-full bg-border"
