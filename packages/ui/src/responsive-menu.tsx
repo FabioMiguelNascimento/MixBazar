@@ -19,26 +19,34 @@ export type ResponsiveMenuItem = {
   onSelect: () => void;
 };
 
-const MenuCloseContext = React.createContext(() => {});
+const MenuContext = React.createContext({
+  isDesktop: false,
+  close: () => {},
+});
 
 function ResponsiveMenu({ children }: { children: React.ReactNode }) {
   const isDesktop = useIsDesktop();
   const [open, setOpen] = React.useState(false);
+  const value = React.useMemo(() => ({ isDesktop, close: () => setOpen(false) }), [isDesktop]);
 
   if (isDesktop) {
-    return <DropdownMenu>{children}</DropdownMenu>;
+    return (
+      <MenuContext.Provider value={value}>
+        <DropdownMenu>{children}</DropdownMenu>
+      </MenuContext.Provider>
+    );
   }
   return (
-    <MenuCloseContext.Provider value={() => setOpen(false)}>
+    <MenuContext.Provider value={value}>
       <Sheet open={open} onOpenChange={setOpen}>
         {children}
       </Sheet>
-    </MenuCloseContext.Provider>
+    </MenuContext.Provider>
   );
 }
 
 function ResponsiveMenuTrigger({ children }: { children: React.ReactElement }) {
-  const isDesktop = useIsDesktop();
+  const { isDesktop } = React.useContext(MenuContext);
   if (isDesktop) {
     return <DropdownMenuTrigger data-slot="responsive-menu-trigger" render={children} />;
   }
@@ -54,8 +62,7 @@ function ResponsiveMenuContent({
   items: ResponsiveMenuItem[];
   className?: string;
 }) {
-  const isDesktop = useIsDesktop();
-  const close = React.useContext(MenuCloseContext);
+  const { isDesktop, close } = React.useContext(MenuContext);
 
   if (isDesktop) {
     return (
