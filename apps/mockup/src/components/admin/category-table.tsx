@@ -78,16 +78,11 @@ export function CategoryTable({
       columnHelper.display({
         id: "status",
         header: "Status",
-        cell: ({ row }) => {
-          const status = row.original.active ? "ativa" : "pausada";
-          return (
-            <span
-              className={`-mx-4 -my-2 block px-4 py-2 text-sm font-medium ${tones[STATUS_TONE[status]]}`}
-            >
-              {row.original.active ? "Ativa" : "Pausada"}
-            </span>
-          );
-        },
+        cell: ({ row }) => (
+          <span className="text-sm font-medium">
+            {row.original.active ? "Ativa" : "Pausada"}
+          </span>
+        ),
       }),
       columnHelper.display({
         id: "acoes",
@@ -172,7 +167,14 @@ export function CategoryTable({
                 className="cursor-pointer"
               >
                 {row.getAllCells().map((cell) => (
-                  <TableCell key={cell.id} className="py-2">
+                  <TableCell
+                    key={cell.id}
+                    className={
+                      cell.column.id === "status"
+                        ? `py-2 ${tones[STATUS_TONE[row.original.active ? "ativa" : "pausada"]]}`
+                        : "py-2"
+                    }
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
