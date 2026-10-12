@@ -74,7 +74,13 @@ function ResponsiveMenuContent({
       >
         <ButtonGroup orientation="vertical" className="w-full">
           {items.map((item) => (
-            <DropdownMenuItem key={item.label} onClick={item.onSelect}>
+            <DropdownMenuItem
+              key={item.label}
+              onClick={(event) => {
+                event.stopPropagation();
+                item.onSelect();
+              }}
+            >
               {item.icon}
               {item.label}
             </DropdownMenuItem>
@@ -100,7 +106,8 @@ function ResponsiveMenuContent({
             <button
               key={item.label}
               type="button"
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 item.onSelect();
                 close();
               }}

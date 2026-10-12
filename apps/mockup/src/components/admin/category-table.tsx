@@ -237,6 +237,7 @@ export function CategoryTable({
                   {menuItems(row.original).map((entry) => (
                     <ContextMenuItem
                       key={entry.label}
+                      onClick={(event) => event.stopPropagation()}
                       onSelect={entry.onSelect}
                     >
                       {entry.icon}
