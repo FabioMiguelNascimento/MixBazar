@@ -46,7 +46,16 @@ export {
 } from "./dropdown-menu.js";
 export { Input } from "./input.js";
 export { Label } from "./label.js";
+export { Popover, PopoverTrigger, PopoverAnchor, PopoverContent } from "./popover.js";
 export { RevenueChart, type RevenueDatum } from "./revenue-chart.js";
+export {
+  ResponsivePopover,
+  ResponsivePopoverContent,
+  ResponsivePopoverHeader,
+  ResponsivePopoverTitle,
+  ResponsivePopoverBody,
+  ResponsivePopoverFooter,
+} from "./responsive-popover.js";
 export { Separator } from "./separator.js";
 export {
   Sheet,
