@@ -46,6 +46,7 @@ export {
 } from "./dropdown-menu.js";
 export { Input } from "./input.js";
 export { Label } from "./label.js";
+export { RevenueChart, type RevenueDatum } from "./revenue-chart.js";
 export { Separator } from "./separator.js";
 export {
   Sheet,
