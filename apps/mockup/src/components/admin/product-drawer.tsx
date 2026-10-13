@@ -5,6 +5,7 @@ import { Field, FormGrid } from "@/components/admin-form";
 import { CoverField } from "@/components/admin/cover-field";
 import { categories as catalogCategories } from "@/data/catalog";
 import {
+  ButtonGroup,
   Input,
   Label,
   ResponsivePopover,
@@ -19,6 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
   Switch,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Textarea,
 } from "@repo/ui";
 import {
@@ -29,17 +34,25 @@ import {
   SheetTitle,
 } from "@repo/ui";
 import { useState } from "react";
+import type { DiscountType } from "@/components/admin/product-model";
+import { formatBRL } from "@/components/admin/product-model";
 
 export type ProductDraft = {
   name: string;
   category: string;
   price: string;
-  oldPrice: string;
-  badge: string;
+  discountType: DiscountType;
+  discountAmount: string;
   description: string;
   images: string[];
   active: boolean;
 };
+
+export type DiscountPreview = {
+  oldPrice: number;
+  price: number;
+  badge: string;
+} | null;
 
 function CategorySelect({
   value,
@@ -84,19 +97,27 @@ function CategorySelect({
 export function ProductDrawer({
   open,
   editing,
+  tab,
+  onTab,
   draft,
   onDraft,
   canSave,
   priceError,
+  discountError,
+  discountPreview,
   onClose,
   onSave,
 }: {
   open: boolean;
   editing: boolean;
+  tab: string;
+  onTab: (next: string) => void;
   draft: ProductDraft;
   onDraft: (patch: Partial<ProductDraft>) => void;
   canSave: boolean;
   priceError: string | null;
+  discountError: string | null;
+  discountPreview: DiscountPreview;
   onClose: () => void;
   onSave: () => void;
 }) {
@@ -127,7 +148,26 @@ export function ProductDrawer({
             </SheetTitle>
           </SheetHeader>
 
-          <FormGrid className="min-h-0 flex-1 content-start overflow-y-auto px-6 py-4">
+          <Tabs
+            value={tab}
+            onValueChange={onTab}
+            className="flex min-h-0 flex-1 flex-col"
+          >
+            <TabsList aria-label="Seções do produto" className="shrink-0 pt-2">
+                <TabsTrigger value="geral">Geral</TabsTrigger>
+                <TabsTrigger value="desconto">
+                  Desconto
+                  {draft.discountType !== "none" && (
+                    <span
+                      aria-hidden="true"
+                      className="size-1.5 rounded-full bg-jungle"
+                    />
+                  )}
+                </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="geral" className="min-h-0 flex-1 overflow-y-auto">
+              <FormGrid className="content-start px-6 py-4">
             <Field span={12}>
               <div className="grid gap-2">
                 <Label htmlFor="product-name">Nome</Label>
@@ -158,31 +198,6 @@ export function ProductDrawer({
                   onChange={(event) => onDraft({ price: event.target.value })}
                   placeholder="97,90"
                   inputMode="decimal"
-                />
-              </div>
-            </Field>
-            <Field span={6}>
-              <div className="grid gap-2">
-                <Label htmlFor="product-old-price">Preço antigo (R$)</Label>
-                <Input
-                  id="product-old-price"
-                  value={draft.oldPrice}
-                  onChange={(event) =>
-                    onDraft({ oldPrice: event.target.value })
-                  }
-                  placeholder="Opcional"
-                  inputMode="decimal"
-                />
-              </div>
-            </Field>
-            <Field span={6}>
-              <div className="grid gap-2">
-                <Label htmlFor="product-badge">Selo</Label>
-                <Input
-                  id="product-badge"
-                  value={draft.badge}
-                  onChange={(event) => onDraft({ badge: event.target.value })}
-                  placeholder="Ex. Novo"
                 />
               </div>
             </Field>
@@ -265,7 +280,123 @@ export function ProductDrawer({
                 </p>
               </Field>
             )}
-          </FormGrid>
+            </FormGrid>
+            </TabsContent>
+
+            <TabsContent
+              value="desconto"
+              className="min-h-0 flex-1 overflow-y-auto"
+            >
+              <FormGrid className="content-start px-6 py-4">
+                <Field span={12}>
+                  <div className="grid gap-2">
+                    <span
+                      id="product-discount-type-label"
+                      className="text-sm font-medium"
+                    >
+                      Tipo de desconto
+                    </span>
+                    <ButtonGroup
+                      aria-labelledby="product-discount-type-label"
+                      orientation="horizontal"
+                    >
+                      {(
+                        [
+                          { value: "none", label: "Sem desconto" },
+                          { value: "percent", label: "Porcentagem" },
+                          { value: "value", label: "Valor (R$)" },
+                        ] as const
+                      ).map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() =>
+                            onDraft({
+                              discountType: option.value,
+                              discountAmount: "",
+                            })
+                          }
+                          aria-pressed={draft.discountType === option.value}
+                          className={`shrink-0 rounded-button border px-4 py-2 text-sm font-medium transition ${
+                            draft.discountType === option.value
+                              ? "border-jungle bg-jungle text-platinum"
+                              : "border-border bg-background text-gunmetal hover:border-jungle"
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </ButtonGroup>
+                  </div>
+                </Field>
+                {draft.discountType === "percent" && (
+                  <Field span={12}>
+                    <div className="grid gap-2">
+                      <Label htmlFor="product-discount-amount">
+                        Porcentagem (%)
+                      </Label>
+                      <Input
+                        id="product-discount-amount"
+                        value={draft.discountAmount}
+                        onChange={(event) =>
+                          onDraft({ discountAmount: event.target.value })
+                        }
+                        placeholder="Ex. 20"
+                        inputMode="numeric"
+                      />
+                    </div>
+                  </Field>
+                )}
+                {draft.discountType === "value" && (
+                  <Field span={12}>
+                    <div className="grid gap-2">
+                      <Label htmlFor="product-discount-amount">
+                        Valor do desconto (R$)
+                      </Label>
+                      <Input
+                        id="product-discount-amount"
+                        value={draft.discountAmount}
+                        onChange={(event) =>
+                          onDraft({ discountAmount: event.target.value })
+                        }
+                        placeholder="Ex. 15,00"
+                        inputMode="decimal"
+                      />
+                    </div>
+                  </Field>
+                )}
+                {discountError !== null && (
+                  <Field span={12}>
+                    <p
+                      role="alert"
+                      className="text-xs font-medium text-danger-text"
+                    >
+                      {discountError}
+                    </p>
+                  </Field>
+                )}
+                {discountPreview !== null && (
+                  <Field span={12}>
+                    <div className="flex min-w-0 items-center gap-3 rounded-card border border-border bg-background px-4 py-3">
+                      <span className="min-w-0 flex-1 text-sm text-pine">
+                        De{" "}
+                        <span className="font-medium text-muted-foreground line-through">
+                          {formatBRL(discountPreview.oldPrice)}
+                        </span>{" "}
+                        por{" "}
+                        <span className="font-heading font-semibold text-gunmetal">
+                          {formatBRL(discountPreview.price)}
+                        </span>
+                      </span>
+                      <span className="shrink-0 rounded-full bg-lime/25 px-2.5 py-0.5 text-xs font-semibold text-pine">
+                        {discountPreview.badge}
+                      </span>
+                    </div>
+                  </Field>
+                  )}
+              </FormGrid>
+            </TabsContent>
+          </Tabs>
 
           <SheetFooter className="shrink-0 flex-row justify-end border-t border-border px-6 py-4">
             <button
