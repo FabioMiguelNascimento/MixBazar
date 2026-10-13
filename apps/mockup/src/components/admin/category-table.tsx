@@ -250,7 +250,7 @@ export function CategoryTable({
 
   return (
     <div className="min-w-0">
-      <div className="-mx-4 min-w-0 md:-mx-6 [&_[data-slot=table-container]]:max-h-[65dvh] [&_[data-slot=table-container]]:overflow-y-auto [&_[data-slot=table-container]]:rounded-none [&_[data-slot=table-container]]:border-x-0 [&_[data-slot=table-header]]:sticky [&_[data-slot=table-header]]:top-0 [&_[data-slot=table-header]]:bg-background">
+      <div className="-mx-4 min-w-0 md:-mx-6 [&_[data-slot=table-container]]:max-h-[65dvh] [&_[data-slot=table-container]]:overflow-y-auto [&_[data-slot=table-container]]:rounded-none [&_[data-slot=table-container]]:border-x-0 [&_[data-slot=table-head]]:sticky [&_[data-slot=table-head]]:top-0 [&_[data-slot=table-head]]:z-10 [&_[data-slot=table-head]]:bg-background">
         <Table aria-label="Categorias" className="w-max min-w-full">
           <TableHeader>
             {table.getHeaderGroups().map((group) => (
@@ -310,7 +310,7 @@ export function CategoryTable({
                         key={cell.id}
                         className={
                           cell.column.id === "status"
-                            ? `py-2 ${ALIGN[cell.column.columnDef.meta?.align ?? "left"]} ${tones[STATUS_TONE[row.original.active ? "ativa" : "pausada"]]} text-gunmetal`
+                            ? `border-b-0 py-2 ${ALIGN[cell.column.columnDef.meta?.align ?? "left"]} ${tones[STATUS_TONE[row.original.active ? "ativa" : "pausada"]]} text-gunmetal`
                             : "py-2"
                         }
                       >

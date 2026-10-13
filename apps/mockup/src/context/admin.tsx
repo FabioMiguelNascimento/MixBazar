@@ -45,6 +45,8 @@ export type UpcomingDelivery = AdminOrder & {
 type AdminContextValue = {
   period: Period;
   setPeriod: (period: Period) => void;
+  orders: AdminOrder[];
+  setOrderStatus: (id: string, status: OrderStatus) => void;
   funnel: { status: OrderStatus; count: number; value: number }[];
   revenue: number;
   confirmedCount: number;
@@ -61,14 +63,25 @@ type AdminContextValue = {
 const AdminContext = createContext<AdminContextValue | null>(null);
 
 function sessionOrderToAdmin(order: Order, customer: string): AdminOrder {
+  const items = order.lines.map((line) =>
+    line.kind === "product"
+      ? {
+          name: line.product.name,
+          quantity: line.quantity,
+          priceValue: line.product.priceValue,
+        }
+      : { name: line.basket.name, quantity: line.quantity, priceValue: null },
+  );
   return {
     id: order.id,
     number: order.number,
     customer,
     summary: `${order.count} ${order.count === 1 ? "item" : "itens"}`,
+    items,
     total: Math.max(0, order.subtotal - order.discount),
     couponCode: order.couponCode,
     status: "novo",
+    address: order.pickup ? null : order.address,
     mode: order.pickup ? "retirada" : "entrega",
     daysAgo: 0,
     hoursStuck: 0,
@@ -79,13 +92,25 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const { orders } = useBasket();
   const { profile } = useCustomer();
   const [period, setPeriod] = useState<Period>("7d");
+  const [seedState, setSeedState] = useState<AdminOrder[]>(seedOrders);
+  const [statusOverride, setStatusOverride] = useState<
+    Record<string, OrderStatus>
+  >({});
 
   const allOrders = useMemo<AdminOrder[]>(() => {
-    const session = orders.map((order) =>
-      sessionOrderToAdmin(order, profile.name),
+    const session = orders.map((order) => ({
+      ...sessionOrderToAdmin(order, profile.name),
+      status: statusOverride[order.id] ?? "novo",
+    }));
+    return [...session, ...seedState];
+  }, [orders, profile.name, seedState, statusOverride]);
+
+  function setOrderStatus(id: string, status: OrderStatus) {
+    setSeedState((prev) =>
+      prev.map((order) => (order.id === id ? { ...order, status } : order)),
     );
-    return [...session, ...seedOrders];
-  }, [orders, profile.name]);
+    setStatusOverride((prev) => ({ ...prev, [id]: status }));
+  }
 
   const visibleOrders = useMemo(
     () => allOrders.filter((order) => order.daysAgo <= PERIOD_DAYS[period]),
@@ -201,6 +226,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const value: AdminContextValue = {
     period,
     setPeriod,
+    orders: allOrders,
+    setOrderStatus,
     funnel,
     revenue,
     confirmedCount,

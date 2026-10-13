@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   ArrowsClockwise,
   Bell,
+  ClipboardText,
   FolderSimple,
   Images,
   Megaphone,
@@ -49,6 +50,7 @@ export type AdminNavItem = {
 
 export const ADMIN_NAV: AdminNavItem[] = [
   { label: "Dashboard", href: "/admin", icon: SquaresFour },
+  { label: "Pedidos", href: "/admin/pedidos", icon: ClipboardText },
   { label: "Produtos", href: "/admin/produtos", icon: Package },
   { label: "Categorias", href: "/admin/categorias", icon: FolderSimple },
   { label: "Banners", href: null, icon: Images },

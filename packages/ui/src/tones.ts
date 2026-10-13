@@ -1,7 +1,7 @@
 export const tones = {
-  jungle: "bg-jungle/10 text-jungle",
-  pine: "bg-pine/10 text-pine",
-  lime: "bg-lime/25 text-pine",
+  jungle: "bg-jungle/15 text-jungle",
+  pine: "bg-pine/15 text-pine",
+  lime: "bg-lime/40 text-pine",
   neutral: "bg-muted text-pine",
   success: "bg-success-bg text-success-text",
   info: "bg-info-bg text-info-text",
