@@ -6,11 +6,14 @@ import { AdminPageHeader } from "@/components/admin-page-header";
 import { AdminShell } from "@/components/admin-shell";
 import { ProductDrawer, type ProductDraft } from "@/components/admin/product-drawer";
 import {
+  buildDiscount,
   parseBRL,
+  parseDiscount,
   productCategories,
   productSlug,
   seedProducts,
   type AdminProduct,
+  type DiscountType,
 } from "@/components/admin/product-model";
 import { ProductTable } from "@/components/admin/product-table";
 
@@ -18,16 +21,44 @@ const EMPTY_DRAFT: ProductDraft = {
   name: "",
   category: "",
   price: "",
-  oldPrice: "",
-  badge: "",
+  discountType: "none",
+  discountAmount: "",
   description: "",
   images: [],
   active: true,
 };
 
+function parseDiscountAmount(
+  type: DiscountType,
+  text: string,
+  price: number | null,
+): { amount: number | null; error: string | null } {
+  if (type === "none") return { amount: null, error: null };
+  if (text.trim() === "") return { amount: null, error: null };
+  if (type === "percent") {
+    if (!/^\d+$/.test(text.trim())) {
+      return { amount: null, error: "Use um número inteiro de 1 a 90." };
+    }
+    const value = Number.parseInt(text.trim(), 10);
+    if (value < 1 || value > 90) {
+      return { amount: null, error: "Use um número inteiro de 1 a 90." };
+    }
+    return { amount: value, error: null };
+  }
+  const value = parseBRL(text);
+  if (value === null || value <= 0) {
+    return { amount: null, error: "Informe um valor maior que zero." };
+  }
+  if (price !== null && value >= price) {
+    return { amount: null, error: "O desconto precisa ser menor que o preço." };
+  }
+  return { amount: value, error: null };
+}
+
 export default function AdminProductsPage() {
   const [items, setItems] = useState<AdminProduct[]>(seedProducts);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [tab, setTab] = useState("geral");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState<ProductDraft>({
     ...EMPTY_DRAFT,
@@ -35,38 +66,66 @@ export default function AdminProductsPage() {
   });
 
   const priceValue = parseBRL(draft.price);
-  const oldPriceValue =
-    draft.oldPrice.trim() === "" ? null : parseBRL(draft.oldPrice);
   const priceError =
     draft.price.trim() !== "" && priceValue === null
       ? "Informe um preço válido, ex. 97,90."
-      : draft.oldPrice.trim() !== "" && oldPriceValue === null
-        ? "Informe um preço antigo válido ou limpe o campo."
-        : null;
+      : null;
+  const discount = parseDiscountAmount(
+    draft.discountType,
+    draft.discountAmount,
+    priceValue,
+  );
+  const discountPreview =
+    draft.discountType !== "none" &&
+    discount.amount !== null &&
+    priceValue !== null
+      ? (() => {
+          const built = buildDiscount(
+            priceValue,
+            draft.discountType,
+            discount.amount,
+          );
+          return built.badge !== null
+            ? {
+                oldPrice: priceValue,
+                price: built.priceValue,
+                badge: built.badge,
+              }
+            : null;
+        })()
+      : null;
   const canSave =
     draft.name.trim() !== "" &&
     draft.category !== "" &&
     priceValue !== null &&
     priceError === null &&
+    discount.error === null &&
+    (draft.discountType === "none" || discount.amount !== null) &&
     draft.images.length > 0;
 
   function openNew() {
     setEditingId(null);
+    setTab("geral");
     setDraft({ ...EMPTY_DRAFT, category: productCategories[0] ?? "" });
     setDialogOpen(true);
   }
 
   function openEdit(item: AdminProduct) {
+    setTab("geral");
+    const discount = parseDiscount(
+      item.badge,
+      item.oldPriceValue,
+      item.priceValue,
+    );
     setEditingId(item.id);
     setDraft({
       name: item.name,
       category: item.category,
-      price: item.priceValue.toFixed(2).replace(".", ","),
-      oldPrice:
-        item.oldPriceValue === null
-          ? ""
-          : item.oldPriceValue.toFixed(2).replace(".", ","),
-      badge: item.badge ?? "",
+      price: (item.oldPriceValue ?? item.priceValue)
+        .toFixed(2)
+        .replace(".", ","),
+      discountType: discount.type,
+      discountAmount: discount.amount,
       description: item.description,
       images: item.images,
       active: item.active,
@@ -76,6 +135,11 @@ export default function AdminProductsPage() {
 
   function save() {
     if (!canSave || priceValue === null) return;
+    const pricing = buildDiscount(
+      priceValue,
+      draft.discountType,
+      discount.amount,
+    );
     if (editingId === null) {
       const id = productSlug(
         draft.name,
@@ -87,9 +151,9 @@ export default function AdminProductsPage() {
           id,
           name: draft.name.trim(),
           category: draft.category,
-          priceValue,
-          oldPriceValue,
-          badge: draft.badge.trim() === "" ? null : draft.badge.trim(),
+          priceValue: pricing.priceValue,
+          oldPriceValue: pricing.oldPriceValue,
+          badge: pricing.badge,
           description: draft.description.trim(),
           images: draft.images,
           active: draft.active,
@@ -103,10 +167,9 @@ export default function AdminProductsPage() {
                 ...item,
                 name: draft.name.trim(),
                 category: draft.category,
-                priceValue,
-                oldPriceValue,
-                badge:
-                  draft.badge.trim() === "" ? null : draft.badge.trim(),
+                priceValue: pricing.priceValue,
+                oldPriceValue: pricing.oldPriceValue,
+                badge: pricing.badge,
                 description: draft.description.trim(),
                 images: draft.images,
                 active: draft.active,
@@ -155,10 +218,14 @@ export default function AdminProductsPage() {
       <ProductDrawer
         open={dialogOpen}
         editing={editingId !== null}
+        tab={tab}
+        onTab={setTab}
         draft={draft}
         onDraft={(patch) => setDraft((prev) => ({ ...prev, ...patch }))}
         canSave={canSave}
         priceError={priceError}
+        discountError={discount.error}
+        discountPreview={discountPreview}
         onClose={() => setDialogOpen(false)}
         onSave={save}
       />
