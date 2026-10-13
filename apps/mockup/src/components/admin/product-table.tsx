@@ -158,6 +158,10 @@ export function ProductTable({
         header: "Produto",
         cell: ({ row }) => {
           const item = row.original;
+          const units = item.components.reduce(
+            (total, entry) => total + entry.quantity,
+            0,
+          );
           return (
             <span className="flex min-w-0 items-center gap-3">
               {item.images[0] ? (
@@ -182,6 +186,7 @@ export function ProductTable({
                 </span>
                 <span className="block truncate text-xs text-pine/70">
                   {item.category}
+                  {item.composite && ` · ${units} ${units === 1 ? "item" : "itens"}`}
                 </span>
               </span>
             </span>

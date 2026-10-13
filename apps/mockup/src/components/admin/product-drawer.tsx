@@ -1,6 +1,6 @@
 "use client";
 
-import { CaretDown, FolderSimple, Image as ImageIcon, X } from "@phosphor-icons/react/dist/ssr";
+import { CaretDown, FolderSimple, Image as ImageIcon, Percent, X } from "@phosphor-icons/react/dist/ssr";
 import { Field, FormGrid } from "@/components/admin-form";
 import { CoverField } from "@/components/admin/cover-field";
 import { categories as catalogCategories } from "@/data/catalog";
@@ -36,6 +36,8 @@ import {
 import { useState } from "react";
 import type { DiscountType } from "@/components/admin/product-model";
 import { formatBRL } from "@/components/admin/product-model";
+import type { AdminProduct, BundleComponent } from "@/components/admin/product-model";
+import { ProductComponents } from "@/components/admin/product-components";
 
 export type ProductDraft = {
   name: string;
@@ -46,6 +48,8 @@ export type ProductDraft = {
   description: string;
   images: string[];
   active: boolean;
+  composite: boolean;
+  components: BundleComponent[];
 };
 
 export type DiscountPreview = {
@@ -97,6 +101,7 @@ function CategorySelect({
 export function ProductDrawer({
   open,
   editing,
+  editingId,
   tab,
   onTab,
   draft,
@@ -105,11 +110,17 @@ export function ProductDrawer({
   priceError,
   discountError,
   discountPreview,
+  catalog,
+  componentsError,
+  cheio,
+  finalPrice,
+  onUseSumAsPrice,
   onClose,
   onSave,
 }: {
   open: boolean;
   editing: boolean;
+  editingId: string | null;
   tab: string;
   onTab: (next: string) => void;
   draft: ProductDraft;
@@ -118,6 +129,11 @@ export function ProductDrawer({
   priceError: string | null;
   discountError: string | null;
   discountPreview: DiscountPreview;
+  catalog: AdminProduct[];
+  componentsError: string | null;
+  cheio: number | null;
+  finalPrice: number | null;
+  onUseSumAsPrice: (sum: number) => void;
   onClose: () => void;
   onSave: () => void;
 }) {
@@ -151,11 +167,14 @@ export function ProductDrawer({
           <Tabs
             value={tab}
             onValueChange={onTab}
-            className="flex min-h-0 flex-1 flex-col"
+            className="flex min-h-0 flex-1 flex-col gap-0"
           >
-            <TabsList aria-label="Seções do produto" className="shrink-0 pt-2">
-                <TabsTrigger value="geral">Geral</TabsTrigger>
-                <TabsTrigger value="desconto">
+            <TabsList aria-label="Seções do produto" className="shrink-0">
+              <TabsTrigger value="geral">Geral</TabsTrigger>
+              {draft.composite && (
+                <TabsTrigger value="componentes">Componentes</TabsTrigger>
+              )}
+              <TabsTrigger value="desconto">
                   Desconto
                   {draft.discountType !== "none" && (
                     <span
@@ -265,6 +284,19 @@ export function ProductDrawer({
             </Field>
             <Field span={12}>
               <div className="flex items-center justify-between gap-4">
+                <Label htmlFor="product-composite">Produto composto</Label>
+                <Switch
+                  id="product-composite"
+                  checked={draft.composite}
+                  onCheckedChange={(next) => {
+                    onDraft({ composite: next });
+                    if (!next) onTab("geral");
+                  }}
+                />
+              </div>
+            </Field>
+            <Field span={12}>
+              <div className="flex items-center justify-between gap-4">
                 <Label htmlFor="product-active">Visível na loja</Label>
                 <Switch
                   id="product-active"
@@ -281,6 +313,26 @@ export function ProductDrawer({
               </Field>
             )}
             </FormGrid>
+            </TabsContent>
+
+            <TabsContent
+              value="componentes"
+              className="min-h-0 flex-1 overflow-y-auto"
+            >
+              <FormGrid className="content-start px-6 py-4">
+                <Field span={12}>
+                  <ProductComponents
+                    catalog={catalog}
+                    excludeId={editingId}
+                    value={draft.components}
+                    onChange={(next) => onDraft({ components: next })}
+                    error={componentsError}
+                    cheio={cheio}
+                    finalPrice={finalPrice}
+                    onUseSumAsPrice={onUseSumAsPrice}
+                  />
+                </Field>
+              </FormGrid>
             </TabsContent>
 
             <TabsContent
@@ -329,6 +381,21 @@ export function ProductDrawer({
                     </ButtonGroup>
                   </div>
                 </Field>
+                {draft.discountType === "none" && (
+                  <Field span={12}>
+                    <div className="flex flex-col items-center gap-1 px-6 py-8 text-center">
+                      <span className="flex size-10 items-center justify-center rounded-full bg-platinum text-pine">
+                        <Percent size={20} />
+                      </span>
+                      <p className="mt-1 text-sm font-medium text-gunmetal">
+                        Nenhum desconto aplicado
+                      </p>
+                      <p className="text-xs text-pine/70">
+                        Escolha porcentagem ou valor para ativar.
+                      </p>
+                    </div>
+                  </Field>
+                )}
                 {draft.discountType === "percent" && (
                   <Field span={12}>
                     <div className="grid gap-2">

@@ -7,6 +7,7 @@ import { AdminShell } from "@/components/admin-shell";
 import { ProductDrawer, type ProductDraft } from "@/components/admin/product-drawer";
 import {
   buildDiscount,
+  formatBare,
   parseBRL,
   parseDiscount,
   productCategories,
@@ -26,6 +27,8 @@ const EMPTY_DRAFT: ProductDraft = {
   description: "",
   images: [],
   active: true,
+  composite: false,
+  components: [],
 };
 
 function parseDiscountAmount(
@@ -94,6 +97,10 @@ export default function AdminProductsPage() {
             : null;
         })()
       : null;
+  const componentsError =
+    draft.composite && draft.components.length === 0
+      ? "Adicione ao menos um componente."
+      : null;
   const canSave =
     draft.name.trim() !== "" &&
     draft.category !== "" &&
@@ -101,6 +108,7 @@ export default function AdminProductsPage() {
     priceError === null &&
     discount.error === null &&
     (draft.discountType === "none" || discount.amount !== null) &&
+    componentsError === null &&
     draft.images.length > 0;
 
   function openNew() {
@@ -129,6 +137,8 @@ export default function AdminProductsPage() {
       description: item.description,
       images: item.images,
       active: item.active,
+      composite: item.composite,
+      components: item.components,
     });
     setDialogOpen(true);
   }
@@ -151,12 +161,14 @@ export default function AdminProductsPage() {
           id,
           name: draft.name.trim(),
           category: draft.category,
-          priceValue: pricing.priceValue,
+          priceValue,
           oldPriceValue: pricing.oldPriceValue,
           badge: pricing.badge,
           description: draft.description.trim(),
           images: draft.images,
           active: draft.active,
+          composite: draft.composite,
+          components: draft.composite ? draft.components : [],
         },
       ]);
     } else {
@@ -173,6 +185,8 @@ export default function AdminProductsPage() {
                 description: draft.description.trim(),
                 images: draft.images,
                 active: draft.active,
+                composite: draft.composite,
+                components: draft.composite ? draft.components : [],
               }
             : item,
         ),
@@ -218,6 +232,7 @@ export default function AdminProductsPage() {
       <ProductDrawer
         open={dialogOpen}
         editing={editingId !== null}
+        editingId={editingId}
         tab={tab}
         onTab={setTab}
         draft={draft}
@@ -226,6 +241,16 @@ export default function AdminProductsPage() {
         priceError={priceError}
         discountError={discount.error}
         discountPreview={discountPreview}
+        catalog={items}
+        componentsError={componentsError}
+        cheio={priceValue}
+        finalPrice={discountPreview?.price ?? priceValue}
+        onUseSumAsPrice={(sum) =>
+          setDraft((prev) => ({
+            ...prev,
+            price: formatBare(Math.round(sum * 100) / 100),
+          }))
+        }
         onClose={() => setDialogOpen(false)}
         onSave={save}
       />

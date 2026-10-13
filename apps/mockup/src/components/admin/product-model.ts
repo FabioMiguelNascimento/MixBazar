@@ -1,6 +1,17 @@
 import { categories, products } from "@/data/catalog";
 import { slugify } from "@/components/admin/category-model";
 
+export type BundleComponentDiscount = {
+  type: "percent" | "value";
+  amount: number;
+};
+
+export type BundleComponent = {
+  productId: string;
+  quantity: number;
+  discount: BundleComponentDiscount | null;
+};
+
 export type AdminProduct = {
   id: string;
   name: string;
@@ -11,19 +22,41 @@ export type AdminProduct = {
   description: string;
   images: string[];
   active: boolean;
+  composite: boolean;
+  components: BundleComponent[];
 };
 
-export const seedProducts: AdminProduct[] = products.map((product) => ({
-  id: product.id,
-  name: product.name,
-  category: product.category,
-  priceValue: product.priceValue,
-  oldPriceValue: null,
-  badge: product.badge ?? null,
-  description: product.description,
-  images: product.images,
-  active: true,
-}));
+const BUNDLE_SEEDS: Record<string, BundleComponent[]> = {
+  "cesta-cafe": [{ productId: "caneca-artesanal", quantity: 1, discount: null }],
+  "cesta-cha": [{ productId: "caneca-artesanal", quantity: 1, discount: null }],
+  "kit-presente": [
+    { productId: "caneca-artesanal", quantity: 1, discount: null },
+    { productId: "kit-papelaria", quantity: 1, discount: null },
+  ],
+  "kit-vinho-queijo": [{ productId: "jogo-canecas", quantity: 1, discount: null }],
+  "cesta-personalizada": [
+    { productId: "buque-flores", quantity: 1, discount: null },
+    { productId: "kit-presente", quantity: 1, discount: null },
+  ],
+  "box-personalizado": [{ productId: "caneca-artesanal", quantity: 2, discount: null }],
+};
+
+export const seedProducts: AdminProduct[] = products.map((product) => {
+  const components = BUNDLE_SEEDS[product.id] ?? [];
+  return {
+    id: product.id,
+    name: product.name,
+    category: product.category,
+    priceValue: product.priceValue,
+    oldPriceValue: null,
+    badge: product.badge ?? null,
+    description: product.description,
+    images: product.images,
+    active: true,
+    composite: components.length > 0,
+    components,
+  };
+});
 
 export const productCategories: string[] = categories.map(
   (category) => category.name,
@@ -43,6 +76,26 @@ export function formatBare(value: number) {
   return Number.isInteger(rounded)
     ? String(rounded)
     : rounded.toFixed(2).replace(".", ",");
+}
+
+export function lineTotals(
+  unitPrice: number,
+  quantity: number,
+  discount: BundleComponentDiscount | null,
+) {
+  const gross = Math.round(unitPrice * quantity * 100) / 100;
+  if (!discount) return { gross, off: 0, net: gross };
+  const off =
+    discount.type === "percent"
+      ? Math.round(((gross * discount.amount) / 100) * 100) / 100
+      : Math.min(discount.amount, gross);
+  return { gross, off, net: Math.round((gross - off) * 100) / 100 };
+}
+
+export function discountLabel(discount: BundleComponentDiscount) {
+  return discount.type === "percent"
+    ? `-${discount.amount}%`
+    : `-R$ ${formatBare(discount.amount)}`;
 }
 
 export type DiscountType = "none" | "percent" | "value";
