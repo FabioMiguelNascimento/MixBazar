@@ -9,6 +9,15 @@ export {
   type IconButtonTone,
 } from "./button.js";
 export { Badge, badgeVariants } from "./badge.js";
+export { Combobox, type ComboboxOption } from "./combobox.js";
+export {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "./command.js";
 export {
   ContextMenu,
   ContextMenuTrigger,
