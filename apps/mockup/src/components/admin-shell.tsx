@@ -54,7 +54,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
   { label: "Produtos", href: "/admin/produtos", icon: Package },
   { label: "Categorias", href: "/admin/categorias", icon: FolderSimple },
   { label: "Banners", href: null, icon: Images },
-  { label: "Cupons", href: null, icon: Ticket },
+  { label: "Cupons", href: "/admin/cupons", icon: Ticket },
   { label: "Campanhas", href: null, icon: Megaphone },
   { label: "ConnectPlug", href: null, icon: ArrowsClockwise },
 ];
