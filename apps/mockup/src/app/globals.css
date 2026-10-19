@@ -37,3 +37,121 @@
     animation-delay: 0s !important;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Assistente de demonstração (helper)                                 */
+/* ------------------------------------------------------------------ */
+
+/* Cursor: anel Lime que respira (apenas opacidade — escala deixa traços
+   de rasterização sobre a captura do alvo). */
+@keyframes helper-pulse {
+  from {
+    opacity: 0.85;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-helper-pulse {
+  animation: helper-pulse 1.25s ease-out infinite;
+}
+
+/* Véu do spotlight: escurece tudo fora do recorte do alvo. */
+.helper-veil {
+  box-shadow: 0 0 0 100vmax color-mix(in oklab, var(--gunmetal) 45%, transparent);
+}
+
+/* O recorte acende no toque do ponteiro demonstrativo. */
+.helper-spotlight {
+  transition: opacity 220ms ease-out;
+}
+
+/* Ponteiro: fade rápido ao aparecer no ponto de partida. */
+.helper-pointer {
+  transition: opacity 160ms ease-out;
+}
+
+/* Ícone do ponteiro: preto, contorno branco e sombra — legível em
+   qualquer fundo, inclusive botões Jungle. */
+.helper-pointer-icon {
+  color: #141414;
+  filter:
+    drop-shadow(0 0 1px #fff)
+    drop-shadow(1px 0 0 #fff)
+    drop-shadow(-1px 0 0 #fff)
+    drop-shadow(0 1px 0 #fff)
+    drop-shadow(0 -1px 0 #fff)
+    drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+/* Onda do toque no exato local do clique. */
+.helper-ripple {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border: 2px solid var(--lime);
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--lime) 50%, transparent);
+  opacity: 0;
+}
+
+@keyframes helper-ripple {
+  0% {
+    opacity: 0.65;
+    transform: scale(0.35);
+  }
+
+  70% {
+    opacity: 0.35;
+    transform: scale(0.95);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+.helper-ripple-run {
+  animation: helper-ripple 620ms ease-out 1 both;
+}
+
+/* Repique do ponteiro ao "clicar". */
+@keyframes helper-point-press {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(0.78);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.helper-point-press {
+  animation: helper-point-press 380ms ease-out 1 both;
+  /* Repique ancorado no "bico" do cursor, não no centro. */
+  transform-origin: 3px 2px;
+}
+
+/* Alvo do passo: botões que só aparecem no hover ficam visíveis. */
+[data-helper-active] {
+  opacity: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .helper-spotlight,
+  .helper-pointer {
+    transition: none;
+  }
+
+  .animate-helper-pulse,
+  .helper-ripple-run,
+  .helper-point-press {
+    animation: none;
+  }
+}

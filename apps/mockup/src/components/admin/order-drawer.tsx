@@ -282,6 +282,7 @@ function OrderDetail({
           <button
             type="button"
             onClick={() => onStatus(order.id, next)}
+            data-helper="admin-pedido-avancar"
             className="inline-flex items-center gap-1.5 rounded-button bg-jungle px-4 py-2 text-sm font-medium text-platinum transition hover:bg-primary-hover"
           >
             Avançar

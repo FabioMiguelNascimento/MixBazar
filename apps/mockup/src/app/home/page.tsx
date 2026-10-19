@@ -321,6 +321,7 @@ function CustomBasket() {
 
           <Link
             href="/cesta"
+            data-helper="home-cta-cesta"
             className={buttonStyles({
               variant: "accent",
               size: "md",

@@ -106,6 +106,7 @@ function PickerRow({ product, basketName, onAdd }: PickerRowProps) {
           setQuantity(1);
           triggerAdded();
         }}
+        data-helper="cesta-add-produto"
         className="relative shrink-0 border border-border hover:border-jungle hover:text-jungle hover:bg-transparent"
         icon={
           <SwapIcon
@@ -234,6 +235,7 @@ export default function CestaPage() {
                   size="xs"
                   icon={<Plus size={15} weight="bold" />}
                   aria-label="Criar nova cesta"
+                  data-helper="cesta-nova"
                   title={atMax ? "Limite de 5 cestas atingido" : undefined}
                   disabled={atMax}
                   onClick={createBasket}
@@ -528,6 +530,7 @@ export default function CestaPage() {
 
                   <Link
                     href="/cesta/complementos"
+                    data-helper="cesta-fazer-pedido"
                     className={buttonStyles({
                       variant: "primary",
                       size: "xl",

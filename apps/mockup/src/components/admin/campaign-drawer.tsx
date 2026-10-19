@@ -202,6 +202,7 @@ export function CampaignDrawer({
             type="button"
             onClick={onSave}
             disabled={!canSave}
+            data-helper="admin-salvar"
             className="rounded-button bg-jungle px-4 py-2 text-sm font-medium text-platinum transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             Salvar

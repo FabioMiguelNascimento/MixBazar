@@ -235,6 +235,7 @@ export default function ProdutoPage() {
                     size="xl"
                     icon={<ShoppingCart size={18} weight="bold" />}
                     onClick={() => addProduct(product, quantity)}
+                    data-helper="produto-add-carrinho"
                     className="w-full sm:w-auto"
                   >
                     Adicionar ao carrinho
@@ -244,6 +245,7 @@ export default function ProdutoPage() {
                     variant="outline"
                     size="xl"
                     onClick={() => addItem(product, quantity)}
+                    data-helper="produto-add-cesta"
                     className="w-full sm:w-auto"
                   >
                     Adicionar à cesta

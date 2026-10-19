@@ -32,6 +32,7 @@ type HeaderAction = {
   showLabel?: boolean;
   wide?: boolean;
   tooltip?: boolean;
+  helper?: string;
 };
 
 function HeaderActionItem({
@@ -46,6 +47,7 @@ function HeaderActionItem({
       href={action.href}
       aria-label={action.label}
       aria-current={active ? "page" : undefined}
+      data-helper={action.helper}
       className={`relative flex size-10 items-center justify-center rounded-full text-pine transition hover:bg-muted hover:text-jungle${
         action.wide === true
           ? " sm:w-auto sm:gap-2 sm:rounded-button sm:px-3"
@@ -89,6 +91,7 @@ export function SiteHeader({
       key: "favorites",
       label: "Favoritos",
       href: "/conta/favoritos",
+      helper: "header-favoritos",
       icon: <Heart size={20} weight="regular" />,
       badge: favoritesCount > 0 && (
         <span className="absolute right-1 top-1 flex size-2 rounded-full bg-lime ring-2 ring-background" />
@@ -98,6 +101,7 @@ export function SiteHeader({
       key: "basket",
       label: "Minha cesta",
       href: "/cesta",
+      helper: "header-cesta",
       icon: <ShoppingBag size={20} weight="regular" />,
       showLabel: true,
       wide: true,
@@ -115,6 +119,7 @@ export function SiteHeader({
       key: "orders",
       label: "Meus pedidos",
       href: "/pedidos",
+      helper: "header-pedidos",
       icon: <ClipboardText size={20} weight="regular" />,
       wide: true,
       badge: orders.length > 0 && (
@@ -130,6 +135,7 @@ export function SiteHeader({
       key: "cart",
       label: "Carrinho",
       href: "/carrinho",
+      helper: "header-carrinho",
       icon: <ShoppingCart size={20} weight="regular" />,
       badge: cartCount > 0 && (
         <span
@@ -144,6 +150,7 @@ export function SiteHeader({
       key: "account",
       label: isLoggedIn ? "Minha conta" : "Entrar",
       href: isLoggedIn ? "/conta" : "/login",
+      helper: "header-conta",
       icon: <UserCircle size={20} weight="regular" />,
     },
   ];

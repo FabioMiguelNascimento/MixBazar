@@ -28,18 +28,21 @@ export default function ContaPage() {
 
   const menu: {
     href: string;
+    key: string;
     label: string;
     sub: string;
     icon: typeof UserCircle;
   }[] = [
     {
       href: "/conta/dados",
+      key: "dados",
       label: "Meus dados",
       sub: "Nome, e-mail, telefone e endereço",
       icon: UserCircle,
     },
     {
       href: "/conta/favoritos",
+      key: "favoritos",
       label: "Meus favoritos",
       sub:
         favorites.length === 0
@@ -49,6 +52,7 @@ export default function ContaPage() {
     },
     {
       href: "/pedidos",
+      key: "pedidos",
       label: "Minhas compras",
       sub:
         orders.length === 0
@@ -97,6 +101,7 @@ export default function ContaPage() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    data-helper={`conta-${item.key}`}
                     className="flex w-full items-center gap-4 rounded-card border border-border bg-background px-5 py-4 transition hover:border-jungle"
                   >
                     <Icon
@@ -128,6 +133,7 @@ export default function ContaPage() {
 
             <button
               type="button"
+              data-helper="conta-sair"
               onClick={() => {
                 logout();
                 router.push("/login");

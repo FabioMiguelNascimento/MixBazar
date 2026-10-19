@@ -260,6 +260,7 @@ export default function ComplementosPage() {
 
                   <Link
                     href="/pedido/novo"
+                    data-helper="complementos-revisar"
                     className={buttonStyles({
                       variant: "primary",
                       size: "xl",

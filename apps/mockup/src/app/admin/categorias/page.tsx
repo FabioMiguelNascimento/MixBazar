@@ -97,6 +97,7 @@ export default function AdminCategoriesPage() {
           <button
             type="button"
             onClick={openNew}
+            data-helper="admin-novo"
             className="inline-flex shrink-0 items-center gap-1.5 rounded-button bg-jungle px-4 py-2 text-sm font-medium text-platinum transition hover:bg-primary-hover"
           >
             <Plus size={16} weight="bold" />

@@ -5,6 +5,8 @@ import { AdminProvider } from "@/context/admin";
 import { CartProvider } from "@/context/cart";
 import { CustomerProvider } from "@/context/customer";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { HelperWidget } from "@/components/helper/helper-widget";
+import { HelperProvider } from "@/context/helper";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -33,7 +35,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CustomerProvider>
             <CartProvider>
               <BasketProvider>
-                <AdminProvider>{children}</AdminProvider>
+                <AdminProvider>
+                  <HelperProvider>
+                    {children}
+                    <HelperWidget />
+                  </HelperProvider>
+                </AdminProvider>
               </BasketProvider>
             </CartProvider>
           </CustomerProvider>

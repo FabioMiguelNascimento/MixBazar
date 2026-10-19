@@ -53,7 +53,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
   { label: "Pedidos", href: "/admin/pedidos", icon: ClipboardText },
   { label: "Produtos", href: "/admin/produtos", icon: Package },
   { label: "Categorias", href: "/admin/categorias", icon: FolderSimple },
-  { label: "Banners", href: null, icon: Images },
+  { label: "Banners", href: "/admin/banners", icon: Images },
   { label: "Cupons", href: "/admin/cupons", icon: Ticket },
   { label: "Campanhas", href: "/admin/campanhas", icon: Megaphone },
   { label: "ConnectPlug", href: null, icon: ArrowsClockwise },
@@ -184,7 +184,14 @@ function AdminSidebar({ active }: { active: string }) {
                 ) : (
                   <SidebarMenuItem key={item.label}>
                     <SidebarMenuButton asChild isActive={item.label === active}>
-                      <Link href={item.href}>
+                      <Link
+                        href={item.href}
+                        data-helper={
+                          item.href === null
+                            ? undefined
+                            : `admin-nav-${item.href.replace("/admin/", "")}`
+                        }
+                      >
                         <item.icon size={18} />
                         <span className="min-w-0 flex-1 truncate">
                           {item.label}

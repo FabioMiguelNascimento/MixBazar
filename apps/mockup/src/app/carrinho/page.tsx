@@ -218,6 +218,7 @@ export default function CarrinhoPage() {
 
                 <Link
                   href="/pedido/novo?from=carrinho"
+                  data-helper="carrinho-fazer-pedido"
                   className={buttonStyles({
                     variant: "primary",
                     size: "xl",

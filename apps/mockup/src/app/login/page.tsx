@@ -160,6 +160,7 @@ function LoginForm() {
                 variant="primary"
                 size="xl"
                 icon={<ArrowRight size={17} />}
+                data-helper="login-entrar"
                 className="mt-2 w-full"
               >
                 Entrar

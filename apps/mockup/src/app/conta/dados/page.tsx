@@ -87,6 +87,7 @@ export default function DadosPage() {
                 size="xs"
                 icon={<PencilLine size={16} />}
                 onClick={startEdit}
+                data-helper="conta-editar"
                 className="hover:border-jungle hover:text-jungle hover:bg-transparent"
               >
                 Editar
@@ -126,6 +127,7 @@ export default function DadosPage() {
                   variant="primary"
                   size="md"
                   onClick={saveEdit}
+                  data-helper="conta-salvar"
                 >
                   Salvar dados
                 </Button>

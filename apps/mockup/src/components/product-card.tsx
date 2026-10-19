@@ -22,7 +22,11 @@ export function ProductCard({
   return (
     <article className="group">
       <div className="relative aspect-[4/4.5] overflow-hidden rounded-card bg-platinum">
-        <Link href={href} className="absolute inset-0 block">
+        <Link
+          href={href}
+          data-helper="produto-abrir"
+          className="absolute inset-0 block"
+        >
           <img
             src={product.images[0]}
             alt={product.name}
@@ -43,6 +47,7 @@ export function ProductCard({
           iconSize="md"
           label={`Favoritar ${product.name}`}
           onClick={onToggleFavorite}
+          data-helper="produto-favoritar"
           className="absolute right-4 top-4 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
           icon={
             <Heart
@@ -66,6 +71,7 @@ export function ProductCard({
             onAdd();
             triggerAdded();
           }}
+          data-helper="produto-add"
           className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
           icon={
             <SwapIcon

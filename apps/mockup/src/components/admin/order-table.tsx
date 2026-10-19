@@ -272,6 +272,7 @@ export function OrderTable({
               >
                 <ContextMenuTrigger asChild>
                   <TableRow
+                    data-helper="admin-pedido-linha"
                     onClick={(event) => {
                       if (
                         (event.target as HTMLElement).closest("tr") !==

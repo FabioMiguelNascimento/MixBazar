@@ -235,6 +235,7 @@ function PedidoWizard({ source }: { source: "basket" | "cart" }) {
 
           <Link
             href={`/login?next=${encodeURIComponent(isCart ? "/pedido/novo?from=carrinho" : "/pedido/novo")}`}
+            data-helper="pedido-entrar"
             className={buttonStyles({
               variant: "primary",
               size: "lg",
@@ -320,6 +321,7 @@ function PedidoWizard({ source }: { source: "basket" | "cart" }) {
                 variant="primary"
                 size="lg"
                 onClick={() => setStep(2)}
+                data-helper="pedido-continuar-endereco"
                 className="sm:w-auto"
               >
                 Continuar para endereço
@@ -418,6 +420,7 @@ function PedidoWizard({ source }: { source: "basket" | "cart" }) {
                 variant="primary"
                 size="lg"
                 onClick={continueToConfirmation}
+                data-helper="pedido-continuar-confirmacao"
                 className="sm:w-auto"
               >
                 Continuar para confirmação
@@ -600,6 +603,7 @@ function PedidoWizard({ source }: { source: "basket" | "cart" }) {
                   variant="primary"
                   size="xl"
                   onClick={confirmOrder}
+                  data-helper="pedido-confirmar"
                   className="mt-5 w-full"
                 >
                   Confirmar no WhatsApp
