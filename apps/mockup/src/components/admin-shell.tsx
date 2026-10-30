@@ -12,6 +12,7 @@ import {
   Package,
   SquaresFour,
   Ticket,
+  Users,
 } from "@phosphor-icons/react/dist/ssr";
 import { CaretDown } from "@phosphor-icons/react/dist/ssr/CaretDown";
 import { PencilSimple } from "@phosphor-icons/react/dist/ssr/PencilSimple";
@@ -51,12 +52,13 @@ export type AdminNavItem = {
 export const ADMIN_NAV: AdminNavItem[] = [
   { label: "Dashboard", href: "/admin", icon: SquaresFour },
   { label: "Pedidos", href: "/admin/pedidos", icon: ClipboardText },
+  { label: "Clientes", href: "/admin/clientes", icon: Users },
   { label: "Produtos", href: "/admin/produtos", icon: Package },
   { label: "Categorias", href: "/admin/categorias", icon: FolderSimple },
   { label: "Banners", href: "/admin/banners", icon: Images },
   { label: "Cupons", href: "/admin/cupons", icon: Ticket },
   { label: "Campanhas", href: "/admin/campanhas", icon: Megaphone },
-  { label: "ConnectPlug", href: null, icon: ArrowsClockwise },
+  { label: "ConnectPlug", href: "/admin/integracao", icon: ArrowsClockwise },
 ];
 
 function AlertsBell() {

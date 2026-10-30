@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Geist_Mono, Montserrat } from "next/font/google";
 import { BasketProvider } from "@/context/basket";
 import { AdminProvider } from "@/context/admin";
+import { CatalogProvider } from "@/context/catalog";
 import { CartProvider } from "@/context/cart";
+import { ClientsProvider } from "@/context/clients";
 import { CustomerProvider } from "@/context/customer";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { HelperWidget } from "@/components/helper/helper-widget";
@@ -36,10 +38,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <CartProvider>
               <BasketProvider>
                 <AdminProvider>
-                  <HelperProvider>
-                    {children}
-                    <HelperWidget />
-                  </HelperProvider>
+                  <ClientsProvider>
+                    <CatalogProvider>
+                      <HelperProvider>
+                        {children}
+                        <HelperWidget />
+                      </HelperProvider>
+                    </CatalogProvider>
+                  </ClientsProvider>
                 </AdminProvider>
               </BasketProvider>
             </CartProvider>

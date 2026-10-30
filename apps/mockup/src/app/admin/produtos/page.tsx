@@ -12,11 +12,11 @@ import {
   parseDiscount,
   productCategories,
   productSlug,
-  seedProducts,
   type AdminProduct,
   type DiscountType,
 } from "@/components/admin/product-model";
 import { ProductTable } from "@/components/admin/product-table";
+import { useCatalog } from "@/context/catalog";
 
 const EMPTY_DRAFT: ProductDraft = {
   name: "",
@@ -59,7 +59,7 @@ function parseDiscountAmount(
 }
 
 export default function AdminProductsPage() {
-  const [items, setItems] = useState<AdminProduct[]>(seedProducts);
+  const { products: items, setProducts: setItems } = useCatalog();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [tab, setTab] = useState("geral");
   const [editingId, setEditingId] = useState<string | null>(null);

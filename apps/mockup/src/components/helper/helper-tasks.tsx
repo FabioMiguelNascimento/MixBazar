@@ -1,5 +1,6 @@
 import type { Icon } from "@phosphor-icons/react";
 import {
+  ArrowsClockwise,
   ClipboardText,
   Heart,
   Images,
@@ -8,6 +9,7 @@ import {
   ShoppingCart,
   Ticket,
   UserCircle,
+  Users,
 } from "@phosphor-icons/react/dist/ssr";
 
 /**
@@ -336,6 +338,57 @@ export const ADMIN_TASKS: HelperTask[] = [
       {
         text: "Avance o pedido para a próxima etapa do atendimento.",
         target: SEL("admin-pedido-avancar"),
+      },
+    ],
+  },
+  {
+    id: "admin-cliente",
+    label: "Histórico do cliente",
+    description: "Dados e pedidos de quem compra, num só lugar.",
+    icon: Users,
+    steps: [
+      {
+        text: "No menu lateral, abra Clientes.",
+        href: "/admin/clientes",
+        target: SEL("admin-nav-clientes"),
+        findingText:
+          "Abra a lista no menu lateral — o botão do passo aparece lá.",
+      },
+      {
+        text: "Toque na linha de um cliente para abrir o histórico.",
+        target: SEL("admin-cliente-linha"),
+        findingText:
+          "Com a lista aberta, toque em qualquer cliente do quadro.",
+      },
+      {
+        text: "Aqui ficam os pedidos do cliente, com totais e datas. Feche pelo X do painel quando quiser.",
+        findingText: "Abra um cliente para ver o histórico.",
+      },
+    ],
+  },
+  {
+    id: "admin-connect",
+    label: "Conciliar planilha",
+    description: "Importe clientes ou produtos via ConnectPlug.",
+    icon: ArrowsClockwise,
+    steps: [
+      {
+        text: "No menu lateral, abra o ConnectPlug.",
+        href: "/admin/integracao",
+        target: SEL("admin-nav-integracao"),
+        findingText:
+          "Abra a lista no menu lateral — o botão do passo aparece lá.",
+      },
+      {
+        text: "Carregue a planilha — use a de demonstração para ver na hora.",
+        target: SEL("integrar-demo"),
+        findingText: "A área de envio fica no alto da tela.",
+      },
+      {
+        text: "Conciliar leva o resultado da planilha para dentro do sistema.",
+        target: SEL("integrar-conciliar"),
+        findingText:
+          "Envie a planilha primeiro — o botão aparece com o resultado.",
       },
     ],
   },
