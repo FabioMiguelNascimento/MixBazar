@@ -8,11 +8,13 @@
  *   4. fechar    — ✕ do painel encerrando com o drawer aberto por trás.
  *   5. clientes  — tour do histórico do cliente conclui.
  *   6. connect   — tour do ConnectPlug concilia a demonstração sozinho.
- *   7. nudge     — desvio do painel sem oscilação (sem A→B→A dentro do passo).
+ *   7. favoritar(+sessao) — coração no catálogo com sessão ativa e vazia.*
+ *   8. nudge     — desvio do painel sem oscilação (sem A→B→A dentro do passo).
  *
  * Uso: pnpm --filter mockup smoke [-- --only=pedido,connect]
  * Requer chromium em ~/.cache/ms-playwright (CHROME_BIN sobrepõe).
  */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { homedir } = require("node:os");
 const { chromium } = require("playwright-core");
 
@@ -194,8 +196,7 @@ async function scenarioFecharComDrawer(browser) {
 }
 
 /** 5. Tour do histórico do cliente (novo módulo). */
-async function scenarioClientes(browser) {
-  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+async function scenarioClientes(browser) {  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 
   await page.goto(`${BASE}/home`, { waitUntil: "domcontentloaded" });
   await startTour(page, "Histórico do cliente");
@@ -305,6 +306,61 @@ async function scenarioNudge(browser) {
   };
 }
 
+/** 8. Favoritar com sessão ativa: gate pula sozinho via skipWhen. */
+async function scenarioFavoritar(browser) {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+
+  await page.goto(`${BASE}/home`, { waitUntil: "domcontentloaded" });
+  await startTour(page, "Guardar favoritos");
+
+  const done = await driveByNext(page);
+  const caminho = await page.evaluate(() =>
+    location.pathname.replace(/^\/mockup/, ""),
+  );
+
+  if (!done) throw new Error("tour favoritar não concluiu (sessão ativa)");
+  if (caminho !== "/conta/favoritos") {
+    throw new Error(`tour terminou em ${caminho}, não em favoritos`);
+  }
+  await closeTour(page);
+  await page.close();
+
+  return { resumo: "concluiu em /conta/favoritos, gate pulado" };
+}
+
+/** 9. Favoritar em sessão vazia: gate → login com fill → favoritos. */
+async function scenarioFavoritarSemSessao(browser) {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+
+  await page.goto(`${BASE}/conta`, { waitUntil: "domcontentloaded" });
+  await page.click('[data-helper="conta-sair"]');
+  await page.waitForURL("**/login", { timeout: 30_000 });
+
+  await startTour(page, "Guardar favoritos");
+
+  let sawGate = false;
+
+  const done = await driveByNext(page, {
+    onState: (state) => {
+      if (state.active === "login-entrar") sawGate = true;
+    },
+  });
+
+  const caminho = await page.evaluate(() =>
+    location.pathname.replace(/^\/mockup/, ""),
+  );
+
+  if (!done) throw new Error("tour favoritar não concluiu (sessão vazia)");
+  if (!sawGate) throw new Error("gate de login do favoritar não apareceu");
+  if (caminho !== "/conta/favoritos") {
+    throw new Error(`tour terminou em ${caminho}, não em favoritos`);
+  }
+  await closeTour(page);
+  await page.close();
+
+  return { resumo: "sessão vazia: gate + login com fill + favoritos" };
+}
+
 /* ---------------------------- runner ------------------------------ */
 
 const SCENARIOS = [
@@ -314,6 +370,8 @@ const SCENARIOS = [
   ["fechar", scenarioFecharComDrawer],
   ["clientes", scenarioClientes],
   ["connect", scenarioConnect],
+  ["favoritar", scenarioFavoritar],
+  ["favoritar-sessao", scenarioFavoritarSemSessao],
   ["nudge", scenarioNudge],
 ];
 

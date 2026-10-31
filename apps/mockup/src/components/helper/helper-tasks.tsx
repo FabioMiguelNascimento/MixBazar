@@ -214,6 +214,24 @@ export const STORE_TASKS: HelperTask[] = [
         target: SEL("header-favoritos"),
       },
       {
+        text: "Sem sessão? Toque em Entrar, no topo, para o favorito ficar só seu.",
+        target: '[data-helper="header-conta"][href="/login"]',
+        optional: true,
+        skipWhen: '[data-helper="header-conta"][href="/conta"]',
+        findingText: "O botão Entrar fica no topo da página.",
+      },
+      {
+        text: "Entre com a sua conta para os favoritos seguirem guardados.",
+        target: SEL("login-entrar"),
+        optional: true,
+        skipWhen: '[data-helper="header-conta"][href="/conta"]',
+        fill: [
+          { selector: "#login-email", value: "fabio.nascimento@example.com" },
+          { selector: "#login-password", value: "bazar2024" },
+        ],
+        findingText: "Confirmando a sessão…",
+      },
+      {
         text: "Aqui estão os produtos guardados, prontos para virar cesta ou pedido.",
         href: "/conta/favoritos",
       },

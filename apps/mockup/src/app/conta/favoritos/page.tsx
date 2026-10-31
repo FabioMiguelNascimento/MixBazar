@@ -55,7 +55,10 @@ export default function FavoritosPage() {
           <span className="text-gunmetal">Meus favoritos</span>
         </nav>
 
-        <section className="pb-20 md:pb-24">
+        <section
+          className="pb-20 md:pb-24"
+          data-helper="favoritos-lista"
+        >
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-jungle">
             Minha conta
           </p>
