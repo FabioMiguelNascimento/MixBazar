@@ -172,8 +172,44 @@ export function HelperCursor({ element }: { element: Element }) {
 
     tick();
 
+    /* Novo toque no alvo — do usuário demonstrando ao vivo, ou do
+       "Próximo" quando a demonstração executa: repete o press e a onda
+       no ponto, no exato momento do clique. */
+    const replayPress = (event: MouseEvent) => {
+      if (!arrived || reduced) return;
+      if (
+        !(event.target instanceof Node) ||
+        !element.contains(event.target)
+      ) {
+        return;
+      }
+
+      const point = clickPoint();
+      const icon = iconRef.current;
+      const ripple = rippleRef.current;
+
+      if (icon !== null) {
+        icon.classList.remove("helper-point-press");
+
+        /* Reflow: força o reinício da animação. */
+        void icon.offsetWidth;
+        icon.classList.add("helper-point-press");
+      }
+
+      if (ripple !== null) {
+        ripple.style.left = `${Math.round(point.x)}px`;
+        ripple.style.top = `${Math.round(point.y)}px`;
+        ripple.classList.remove("helper-ripple-run");
+        void ripple.offsetWidth;
+        ripple.classList.add("helper-ripple-run");
+      }
+    };
+
+    document.addEventListener("click", replayPress, true);
+
     return () => {
       cancelAnimationFrame(frame);
+      document.removeEventListener("click", replayPress, true);
     };
   }, [element]);
 
