@@ -9,6 +9,8 @@
  *   5. clientes  — tour do histórico do cliente conclui.
  *   6. connect   — tour do ConnectPlug concilia a demonstração sozinho.
  *   7. favoritar(+sessao) — coração no catálogo com sessão ativa e vazia.*
+ *   8. conta(+sessao) — sair/entrar com sessão ativa; vazia pula os passos
+ *      que exigem sessão e entra pelo topo.
  *   8. nudge     — desvio do painel sem oscilação (sem A→B→A dentro do passo).
  *
  * Uso: pnpm --filter mockup smoke [-- --only=pedido,connect]
@@ -361,6 +363,62 @@ async function scenarioFavoritarSemSessao(browser) {
   return { resumo: "sessão vazia: gate + login com fill + favoritos" };
 }
 
+/** 10. Tour da conta com sessão ativa (fluxo clássico com 로그아웃). */
+async function scenarioConta(browser) {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+
+  await page.goto(`${BASE}/home`, { waitUntil: "domcontentloaded" });
+  await startTour(page, "Entrar na sua conta");
+
+  const done = await driveByNext(page);
+  const caminho = await page.evaluate(() =>
+    location.pathname.replace(/^\/mockup/, ""),
+  );
+
+  if (!done) throw new Error("tour conta não concluiu (sessão ativa)");
+  if (caminho !== "/conta/dados") {
+    throw new Error(`tour conta terminou em ${caminho}, não em /conta/dados`);
+  }
+  await closeTour(page);
+  await page.close();
+
+  return { resumo: "sair → login com fill → dados salvos" };
+}
+
+/** 11. Tour da conta em sessão vazia: entra pelo topo e os passos que
+ * exigem sessão pulam direto; login com fill termina nos dados. */
+async function scenarioContaSemSessao(browser) {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+
+  await page.goto(`${BASE}/conta`, { waitUntil: "domcontentloaded" });
+  await page.click('[data-helper="conta-sair"]');
+  await page.waitForURL("**/login", { timeout: 30_000 });
+
+  await startTour(page, "Entrar na sua conta");
+
+  let sawLogin = false;
+
+  const done = await driveByNext(page, {
+    onState: (state) => {
+      if (state.active === "login-entrar") sawLogin = true;
+    },
+  });
+
+  const caminho = await page.evaluate(() =>
+    location.pathname.replace(/^\/mockup/, ""),
+  );
+
+  if (!done) throw new Error("tour conta não concluiu (sessão vazia)");
+  if (!sawLogin) throw new Error("passo de login não apareceu na sessão vazia");
+  if (caminho !== "/conta/dados") {
+    throw new Error(`tour conta terminou em ${caminho}, não em /conta/dados`);
+  }
+  await closeTour(page);
+  await page.close();
+
+  return { resumo: "sessão vazia: pulos rápidos + login com fill + dados" };
+}
+
 /* ---------------------------- runner ------------------------------ */
 
 const SCENARIOS = [
@@ -372,6 +430,8 @@ const SCENARIOS = [
   ["connect", scenarioConnect],
   ["favoritar", scenarioFavoritar],
   ["favoritar-sessao", scenarioFavoritarSemSessao],
+  ["conta", scenarioConta],
+  ["conta-sessao", scenarioContaSemSessao],
   ["nudge", scenarioNudge],
 ];
 

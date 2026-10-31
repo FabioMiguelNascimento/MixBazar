@@ -162,14 +162,25 @@ export const STORE_TASKS: HelperTask[] = [
     icon: UserCircle,
     steps: [
       {
+        text: "Sem sessão? Toque em Entrar, no topo.",
+        target: '[data-helper="header-conta"][href="/login"]',
+        optional: true,
+        skipWhen: '[data-helper="header-conta"][href="/conta"], #login-email',
+        findingText: "O botão Entrar fica no topo da página.",
+      },
+      {
         text: "A conta fica por aqui no topo.",
         href: "/home",
-        target: SEL("header-conta"),
+        target: '[data-helper="header-conta"][href="/conta"]',
+        optional: true,
+        skipWhen: '#login-email, [data-helper="header-conta"][href="/login"]',
       },
       {
         text: "Vamos encerrar a sessão para demonstrar o login.",
         href: "/conta",
         target: SEL("conta-sair"),
+        optional: true,
+        skipWhen: '#login-email, [data-helper="header-conta"][href="/login"]',
       },
       {
         text: "Preencha e-mail e senha e toque em Entrar.",
